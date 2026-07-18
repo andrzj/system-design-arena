@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --radius: 0.5rem;
+  --color-canvas-grid: var(--canvas-grid);
+}
+
+:root {
+  --background: #0a0a0f;
+  --foreground: #f0f0f5;
+  --card: #1a1a2e;
+  --card-foreground: #e0e0eb;
+  --primary: #3b82f6;
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --secondary-foreground: #94a3b8;
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+  --muted: #1e293b;
+  --muted-foreground: #64748b;
+  --border: #2a2a3e;
+  --destructive: #ef4444;
+  --success: #22c55e;
+  --canvas-grid: #1a1a2e;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* React Flow overrides for dark theme */
+.react-flow__background {
+  background: var(--background) !important;
+}
+
+.react-flow__controls {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+}
+
+.react-flow__controls-button {
+  background: var(--card) !important;
+  border-bottom: 1px solid var(--border) !important;
+  fill: var(--foreground) !important;
+}
+
+.react-flow__minimap {
+  border: 1px solid var(--border) !important;
+  border-radius: var(--radius) !important;
+}
