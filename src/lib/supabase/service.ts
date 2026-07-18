@@ -203,7 +203,7 @@ class SupabaseService {
   }
 
   // Canvas node methods
-  async createNodes(nodes: Omit<CanvasNode, 'id' | 'created_at' | 'updated_at'>[]): Promise<CanvasNode[]> {
+  async createNodes(nodes: Array<Omit<CanvasNode, 'id' | 'created_at' | 'updated_at'>>): Promise<CanvasNode[]> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('canvas_nodes')
@@ -249,8 +249,18 @@ class SupabaseService {
     if (error) throw error;
   }
 
+  async deleteNodesBySessionId(sessionId: number): Promise<void> {
+    const supabase = await this.getSupabase();
+    const { error } = await supabase
+      .from('canvas_nodes')
+      .delete()
+      .eq('session_id', sessionId);
+
+    if (error) throw error;
+  }
+
   // Canvas edge methods
-  async createEdges(edges: Omit<CanvasEdge, 'id' | 'created_at'>[]): Promise<CanvasEdge[]> {
+  async createEdges(edges: Array<Omit<CanvasEdge, 'id' | 'created_at'>>): Promise<CanvasEdge[]> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('canvas_edges')
@@ -296,6 +306,16 @@ class SupabaseService {
     if (error) throw error;
   }
 
+  async deleteEdgesBySessionId(sessionId: number): Promise<void> {
+    const supabase = await this.getSupabase();
+    const { error } = await supabase
+      .from('canvas_edges')
+      .delete()
+      .eq('session_id', sessionId);
+
+    if (error) throw error;
+  }
+
   // Chaos log methods
   async logChaosEvent(sessionId: number, eventId: string, targetNodeId: number | null, result: unknown): Promise<ChaosLog> {
     const supabase = await this.getSupabase();
@@ -314,7 +334,7 @@ class SupabaseService {
     return data;
   }
 
-  async getChaosLogsBySessionId(sessionId: number): Promise<ChaosLog[]> {
+  async getChaosLogsBySessionId(sessionId: number): Promise<Array<ChaosLog>> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('chaos_logs')
@@ -347,7 +367,7 @@ class SupabaseService {
     return data;
   }
 
-  async getScoreResultsBySessionId(sessionId: number): Promise<ScoreResult[]> {
+  async getScoreResultsBySessionId(sessionId: number): Promise<Array<ScoreResult>> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('score_results')
@@ -360,7 +380,7 @@ class SupabaseService {
   }
 
   // Article methods
-  async getArticles(): Promise<Article[]> {
+  async getArticles(): Promise<Array<Article>> {
     const supabase = await this.getSupabase();
     const { data, error } = await supabase
       .from('articles')

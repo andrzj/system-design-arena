@@ -103,51 +103,51 @@ This document breaks down the PRD into actionable tasks for building the System 
 - [ ] Ensure all pages are responsive and follow the design system
 
 ## Phase 4: Design Session (Playground) - Canvas
-- [ ] Create session layout with tabs (Canvas, Chaos, Mermaid)
-- [ ] Implement session header:
-  - Problem title and status badge (in progress/completed)
-  - Start/Stop simulation button (toggles sim state, updates backend)
-  - Three sliders: Speed (0-5x), Traffic (0-5x), Read/Write Ratio (0-1, default per problem)
-  - Simulation counter: "X/1 sims today"
-  - Read/write path indicator (e.g., "Read-heavy · 8% write")
-- [ ] Implement Canvas tab:
-  - Initialize React Flow instance with custom node types
-  - Build Component Palette (sidebar) with 44 components categorized:
-    - Client: Client, Mobile
-    - Traffic & Edge: DNS, CDN, Load Balancer, WAF, API Gateway, Ingress
-    - Compute: App Server, Worker, Serverless, Auth Service, Search, Scheduler, Notifications, Analytics
-    - Storage: SQL Database, NoSQL DB, Cache, Object Store, Data Warehouse, Vector DB
-    - Messaging: Message Queue, Pub/Sub, Event Stream, Kafka
-    - Observability: Metrics, Logs, Tracing, Alerting, Health Check
-    - Network: VPC, Subnet, NAT Gateway, VPN, Service Mesh
-    - AI & Agents: LLM Gateway, Orchestrator, Tool Registry, Memory Fabric, Safety Mesh
-    - External: 3rd Party API, Payment, Email
-  - Each component button adds a node to the canvas at a default position
-  - Node UI:
-    - Label (component type)
-    - Replica count (- / + buttons, min 1)
-    - Implementation notes icon (opens text input, requires auth)
-    - Tooltip on hover showing component description
-    - Connection handles (left=target, right=source)
-  - Edge creation: drag from source handle (right) to target handle (left)
-  - Canvas controls: zoom in/out, fit view, toggle interactivity, minimap
-  - Implement node dragging, selection, deletion (Delete key)
-  - Persist canvas state (nodes, edges) to Supabase via Zustand middleware or onChange handlers
-  - Load existing session data on mount
-  - Implement auto-save (debounced) to prevent data loss
+- [x] Create session layout with tabs (Canvas, Chaos, Mermaid)
+- [x] Implement session header:
+-   - Problem title and status badge (in progress/completed)
+-   - Start/Stop simulation button (toggles sim state, updates backend)
+-   - Three sliders: Speed (0-5x), Traffic (0-5x), Read/Write Ratio (0-1, default per problem)
+-   - Simulation counter: "X/1 sims today"
+-   - Read/write path indicator (e.g., "Read-heavy · 8% write")
+- [x] Implement Canvas tab:
+-   - Initialize React Flow instance with custom node types
+-   - Build Component Palette (sidebar) with 44 components categorized:
+-     - Client: Client, Mobile
+-     - Traffic & Edge: DNS, CDN, Load Balancer, WAF, API Gateway, Ingress
+-     - Compute: App Server, Worker, Serverless, Auth Service, Search, Scheduler, Notifications, Analytics
+-     - Storage: SQL Database, NoSQL DB, Cache, Object Store, Data Warehouse, Vector DB
+-     - Messaging: Message Queue, Pub/Sub, Event Stream, Kafka
+-     - Observability: Metrics, Logs, Tracing, Alerting, Health Check
+-     - Network: VPC, Subnet, NAT Gateway, VPN, Service Mesh
+-     - AI & Agents: LLM Gateway, Orchestrator, Tool Registry, Memory Fabric, Safety Mesh
+-     - External: 3rd Party API, Payment, Email
+-   - Each component button adds a node to the canvas at a default position
+-   - Node UI:
+-     - Label (component type)
+-     - Replica count (- / + buttons, min 1)
+-     - Implementation notes icon (opens text input, requires auth)
+-     - Tooltip on hover showing component description
+-     - Connection handles (left=target, right=source)
+-   - Edge creation: drag from source handle (right) to target handle (left)
+-   - Canvas controls: zoom in/out, fit view, toggle interactivity, minimap
+-   - Implement node dragging, selection, deletion (Delete key)
+-   - Persist canvas state (nodes, edges) to Supabase via Zustand middleware or onChange handlers
+-   - Load existing session data on mount
+-   - Implement auto-save (debounced) to prevent data loss
 - [ ] Implement Mermaid tab:
-  - Check user subscription (yearly or sbc) for access
-  - If not subscribed, show upgrade prompt
-  - If subscribed, show Mermaid editor (use @codemirror/light or similar)
-  - Implement bidirectional sync (advanced) OR one-way (canvas -> mermaid) for MVP
-  - Provide preview of rendered Mermaid diagram
+-   - Check user subscription (yearly or sbc) for access
+-   - If not subscribed, show upgrade prompt
+-   - If subscribed, show Mermaid editor (use @codemirror/light or similar)
+-   - Implement bidirectional sync (advanced) OR one-way (canvas -> mermaid) for MVP
+-   - Provide preview of rendered Mermaid diagram
 - [ ] Implement Chaos tab:
-  - List 30 chaos events grouped by category (Infrastructure, Network, Application, Global)
-  - Each event as a button with emoji, title, description
-  - Allow selecting a target node (for targeted attacks) or leave as global
-  - "Start Simulation" button triggers the chaos event
-  - Display results (e.g., node status changes, simulated latency/error rates)
-  - Integrate with simulation engine to modify canvas node properties visually
+-   - List 30 chaos events grouped by category (Infrastructure, Network, Application, Global)
+-   - Each event as a button with emoji, title, description
+-   - Allow selecting a target node (for targeted attacks) or leave as global
+-   - "Start Simulation" button triggers the chaos event
+-   - Display results (e.g., node status changes, simulated latency/error rates)
+-   - Integrate with simulation engine to modify canvas node properties visually
 
 ## Phase 5: Simulation Engine
 - [ ] Define simulation state: speed multiplier, traffic multiplier, read/write ratio

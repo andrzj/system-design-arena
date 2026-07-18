@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -11,12 +13,12 @@ export default function Home() {
             Draw architectures on a live blueprint canvas, get scored by two debating AI judges, and improve your skills with instant feedback.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href="/problems"
-              className="flex h-12 w-full items-center justify-center rounded-border bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:pointer-events-none disabled:opacity-50"
-            >
-                            Get Started — It&apos;s Free
-            </a>
+                <Link
+                href="/problems"
+                className="flex h-12 w-full items-center justify-center rounded-border bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:pointer-events-none disabled:opacity-50"
+              >
+                Get Started — It&apos;s Free
+              </Link>
             <a
               href="/learn"
               className="flex h-12 w-full items-center justify-center rounded-border border px-6 py-3 text-sm font-medium text-foreground hover:bg-muted transition-colors"
@@ -94,14 +96,14 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex-shrink-0">
-                  <a
+                  <Link
                     href="/problems/1"
                     className="flex h-10 w-10 items-center justify-center rounded-border border border-primary/50 hover:bg-primary/10 transition-colors"
                   >
-                    <svg className="h-10 wnone" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                  </a>
+                  </Link>
                 </div>
               </div>
               <p className="mt-4 text-sm text-muted-foreground">
@@ -113,12 +115,12 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-10 text-center">
-            <a
-              href="/problems"
-              className="inline-flex h-11 w-full items-center justify-center rounded-border bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Browse All Problems
-            </a>
+                <Link
+                href="/problems"
+                className="flex h-12 w-full items-center justify-center rounded-border bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:pointer-events-none disabled:opacity-50"
+              >
+                Get Started — It&apos;s Free
+              </Link>
           </div>
         </div>
       </section>
@@ -308,12 +310,12 @@ export default function Home() {
           <p className="text-lg text-muted-foreground mb-8">
             Join thousands of engineers using Arena to prepare for their next interview.
           </p>
-          <a
-            href="/problems"
-            className="inline-flex h-12 w-full items-center justify-center rounded-border bg-primary px-6 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
-          >
-            Start Practicing — It&apos;s Free
-          </a>
+              <Link
+                href="/problems"
+                className="inline-flex h-11 w-full items-center justify-center rounded-border bg-primary px-5 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                Start Practicing — It&apos;s Free
+              </Link>
         </div>
       </section>
 
