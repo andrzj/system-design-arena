@@ -3,11 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "dev:no-turbo": "next dev",
+    "dev": "next dev --turbopack -p 3030",
+    "dev:no-turbo": "next dev -p 3030",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "start": "next start -p 3030",
+    "lint": "eslint",
+    "docker:build": "docker build -t system-design-arena .",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f",
+    "docker:clean": "docker-compose down --rmi local"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.0",
