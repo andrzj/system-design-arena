@@ -2,7 +2,7 @@ import React from 'react';
 import { supabaseService } from '@/lib/supabase/service';
 import ProblemList from '@/components/problems/ProblemList';
 
-export const dynamic = 'force-static'; // pre-render at build time
+export const dynamic = 'force-dynamic'; // fetch at request time
 
 async function fetchProblems() {
   return supabaseService.getProblems();

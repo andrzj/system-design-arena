@@ -1,4 +1,6 @@
 import { supabaseService } from '@/lib/supabase/service';
+import type { Problem } from '@/lib/supabase/service';
+
 
 import { notFound } from 'next/navigation';
 
