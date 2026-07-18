@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3030:3030"
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_APP_URL=http://localhost:3030
+      - NEXT_PUBLIC_SUPABASE_URL=http://supabase:8000
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-sb_publishable_1lL3DS7iXUWpZNx3Lsw4RG_ubcW-ON8}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-sb_secret_1QRT0h-Wde67b5U9oVtHr6_iEDAroK6}
+    depends_on:
+      - supabase
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+    restart: unless-stopped
+
+  supabase:
+    image: supabase/supabase:latest
+    ports:
+      - "8000:8000"
+      - "5432:5432"
+    environment:
+      - DB_PASSWORD=postgres
+      - DB_ROOT_PASSWORD=postgres
+      - JWT_SECRET=test-jwt-secret-key
+      - ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY:-sb_publishable_1lL3DS7iXUWpZNx3Lsw4RG_ubcW-ON8}
+      - SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY:-sb_secret_1QRT0h-Wde67b5U9oVtHr6_iEDAroK6}
+    volumes:
+      - supabase_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  supabase_data:
