@@ -303,7 +303,7 @@ prisma/
 |---|---|---|
 | 0 | Project Scaffold & Infra | 🟢 Complete (Stripe deferred) |
 | 1 | Prisma + Supabase Auth | 🟢 Complete (OAuth deferred) |
-| 2 | Landing & Marketing | 🟡 Partial |
+| 2 | Landing & Marketing | 🟢 Complete |
 | 3 | Problem Library | 🟡 Partial |
 | 4 | Playground — Canvas | 🟡 Partial (components only) |
 | 5 | Chaos Engineering | 🔴 Not started |
@@ -355,12 +355,12 @@ prisma/
 
 - [x] 2.1 Hero section — heading, subtext, "Get started" CTA
 - [x] 2.2 How it works — 3-step explainer (Choose → Design → Score)
-- [ ] 2.3 Problem preview cards — 3–4 featured problems with difficulty/tags
-- [ ] 2.4 Pricing section — Free / Yearly ($49) / Stupid Button Club
-- [ ] 2.5 Learning library callout — link to `/learn` with featured articles
-- [ ] 2.6 Header — Logo, Learn, Problems, Get Started / Sign In (auth-aware)
-- [ ] 2.7 Footer — copyright, attribution
-- [ ] 2.8 Responsive design pass for all marketing pages
+- [x] 2.3 Problem preview cards — 3–4 featured problems with difficulty/tags
+- [x] 2.4 Pricing section — Free / Yearly ($49) / Stupid Button Club
+- [x] 2.5 Learning library callout — link to `/learn` with featured articles
+- [x] 2.6 Header — Logo, Learn, Problems, Get Started / Sign In (auth-aware)
+- [x] 2.7 Footer — copyright, attribution
+- [x] 2.8 Responsive design pass for all marketing pages
 
 ---
 
