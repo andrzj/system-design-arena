@@ -480,6 +480,10 @@ export const getComponentById = (id: string) => {
   return COMPONENT_DEFS.find(component => component.id === id);
 };
 
+export const getComponentByType = (type: string) => {
+  return COMPONENT_DEFS.find(component => component.type === type || component.id === type);
+};
+
 export const getCategories = () => {
   return [...new Set(COMPONENT_DEFS.map(component => component.category))];
 };

@@ -165,3 +165,152 @@ export async function createScoreResult(
     },
   });
 }
+
+export async function upsertCanvasNodes(
+  sessionId: number,
+  nodes: Array<{
+    nodeUuid: string;
+    componentType: string;
+    label?: string | null;
+    x: number;
+    y: number;
+    replicas: number;
+    implementationNotes?: string | null;
+    isDisabled?: boolean;
+  }>,
+) {
+  const results = await Promise.all(
+    nodes.map((node) =>
+      prisma.canvasNode.upsert({
+        where: { nodeUuid: node.nodeUuid },
+        create: { ...node, sessionId },
+        update: {
+          componentType: node.componentType,
+          label: node.label,
+          x: node.x,
+          y: node.y,
+          replicas: node.replicas,
+          implementationNotes: node.implementationNotes,
+          isDisabled: node.isDisabled ?? false,
+        },
+      }),
+    ),
+  );
+  return results;
+}
+
+export async function upsertCanvasEdges(
+  sessionId: number,
+  edges: Array<{
+    edgeUuid: string;
+    sourceNodeUuid: string;
+    targetNodeUuid: string;
+    label?: string | null;
+    style?: string | null;
+  }>,
+) {
+  const nodeMap = new Map(
+    (
+      await prisma.canvasNode.findMany({
+        where: { sessionId },
+        select: { id: true, nodeUuid: true },
+      })
+    ).map((n) => [n.nodeUuid, n.id]),
+  );
+
+  const results = await Promise.all(
+    edges.map(async (edge) => {
+      const sourceNodeId = nodeMap.get(edge.sourceNodeUuid);
+      const targetNodeId = nodeMap.get(edge.targetNodeUuid);
+      if (!sourceNodeId || !targetNodeId) {
+        throw new Error(`Invalid edge endpoints: ${edge.edgeUuid}`);
+      }
+
+      return prisma.canvasEdge.upsert({
+        where: { edgeUuid: edge.edgeUuid },
+        create: {
+          edgeUuid: edge.edgeUuid,
+          sessionId,
+          sourceNodeId,
+          targetNodeId,
+          label: edge.label,
+          style: edge.style ?? 'solid',
+        },
+        update: {
+          sourceNodeId,
+          targetNodeId,
+          label: edge.label,
+          style: edge.style ?? 'solid',
+        },
+      });
+    }),
+  );
+
+  return results;
+}
+
+export async function deleteNodeByUuid(sessionId: number, nodeUuid: string) {
+  const node = await prisma.canvasNode.findFirst({
+    where: { sessionId, nodeUuid },
+  });
+  if (!node) return null;
+  await prisma.canvasNode.delete({ where: { id: node.id } });
+  return node;
+}
+
+export async function getChaosLogsBySessionId(sessionId: number) {
+  return prisma.chaosLog.findMany({
+    where: { sessionId },
+    orderBy: { timestamp: 'desc' },
+    include: { targetNode: { select: { nodeUuid: true, label: true, componentType: true } } },
+  });
+}
+
+export async function getScoreResultsByUserId(userId: string) {
+  return prisma.scoreResult.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      session: { include: { problem: true } },
+    },
+  });
+}
+
+export async function getSessionsByUserId(userId: string) {
+  return prisma.designSession.findMany({
+    where: { userId },
+    orderBy: { updatedAt: 'desc' },
+    include: {
+      problem: true,
+      scoreResults: { orderBy: { createdAt: 'desc' }, take: 1 },
+    },
+  });
+}
+
+export async function getDashboardStats(userId: string) {
+  const [sessions, scores] = await Promise.all([
+    prisma.designSession.findMany({
+      where: { userId },
+      select: { id: true, problemId: true, status: true },
+    }),
+    prisma.scoreResult.findMany({
+      where: { userId },
+      select: {
+        judgeRigorScore: true,
+        judgePragmatismScore: true,
+        consensusVerdict: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'asc' },
+    }),
+  ]);
+
+  const problemIds = new Set(sessions.map((s) => s.problemId));
+
+  return {
+    totalSessions: sessions.length,
+    problemsAttempted: problemIds.size,
+    completedSessions: sessions.filter((s) => s.status === 'completed').length,
+    scores,
+  };
+}
