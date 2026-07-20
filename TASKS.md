@@ -302,7 +302,7 @@ prisma/
 | Phase | Name | Status |
 |---|---|---|
 | 0 | Project Scaffold & Infra | 🟢 Complete (Stripe deferred) |
-| 1 | Prisma + Supabase Auth | 🔴 Not started |
+| 1 | Prisma + Supabase Auth | 🟢 Complete (OAuth deferred) |
 | 2 | Landing & Marketing | 🟡 Partial |
 | 3 | Problem Library | 🟡 Partial |
 | 4 | Playground — Canvas | 🟡 Partial (components only) |
@@ -339,15 +339,15 @@ prisma/
 
 ## Phase 1: Supabase Authentication & User Profiles
 
-- [ ] 1.1 Set up Supabase project (self-hosted or cloud) with Auth enabled
-- [ ] 1.2 Implement sign-in / sign-up pages (`/auth/sign-in`, `/auth/sign-up`)
-- [ ] 1.3 Add Supabase OAuth callback route (`/api/auth/callback`)
-- [ ] 1.4 **Create Profile on sign-up** — server action or auth webhook creates `Profile` row via Prisma (id = auth user UUID)
-- [ ] 1.5 `useAuth` hook / auth store — expose session user + profile (subscription tier, sim count)
-- [ ] 1.6 User dropdown in header (avatar, sign out, settings link)
-- [ ] 1.7 Subscription tier helper: `getUserTier(profile)` → free | yearly | sbc
-- [ ] 1.8 Daily sim counter reset logic (`src/lib/utils/rate-limit.ts`) — server-side, stored on Profile
-- [ ] 1.9 Test full auth flow: sign up → profile created → protected route → sign out
+- [x] 1.1 Set up Supabase project (self-hosted or cloud) with Auth enabled — documented in README for self-hosted
+- [x] 1.2 Implement sign-in / sign-up pages (`/auth/sign-in`, `/auth/sign-up`)
+- [ ] 1.3 Add Supabase OAuth callback route (`/api/auth/callback`) — **deferred (email-only MVP)**
+- [x] 1.4 **Create Profile on sign-up** — server action or auth webhook creates `Profile` row via Prisma (id = auth user UUID)
+- [x] 1.5 `useAuth` hook / auth store — expose session user + profile (subscription tier, sim count)
+- [x] 1.6 User dropdown in header (avatar, sign out, settings link)
+- [x] 1.7 Subscription tier helper: `getUserTier(profile)` → free | yearly | sbc
+- [x] 1.8 Daily sim counter reset logic (`src/lib/utils/rate-limit.ts`) — server-side, stored on Profile
+- [x] 1.9 Test full auth flow: sign up → profile created → protected route → sign out — Playwright `e2e/auth.spec.ts`
 
 ---
 

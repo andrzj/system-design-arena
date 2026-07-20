@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, IBM_Plex_Mono, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/components/shared/AuthProvider";
+import { Header } from "@/components/shared/Header";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -44,7 +46,10 @@ export default function RootLayout({
       className={`${inter.variable} ${ibmPlexMono.variable} ${spaceGrotesk.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        {children}
+        <AuthProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

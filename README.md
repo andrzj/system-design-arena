@@ -53,10 +53,24 @@ npm run docker:clean
 Create a `.env` file in the project root with the following variables:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co
+DATABASE_URL="postgresql://postgres:postgres@supabase.local:5432/postgres"
+NEXT_PUBLIC_SUPABASE_URL="your-project-ref.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXT_PUBLIC_APP_URL="http://localhost:3030"
 ```
+
+### Self-Hosted Supabase Auth (Phase 1)
+
+When using a local Supabase stack (`supabase.local`):
+
+1. Enable **Auth** and the **Email** provider in the Supabase dashboard/API.
+2. Set **Site URL** to `http://localhost:3030`.
+3. Add redirect URLs: `http://localhost:3030/**`.
+4. OAuth providers are optional for MVP — Phase 1 uses email/password only.
+5. Ensure `DATABASE_URL` points at the same Postgres instance used by Supabase so Prisma `Profile` rows stay in sync with `auth.users`.
+
+After sign-up, the app creates a `profiles` row via Prisma (`Profile.id` = Supabase user UUID).
 
 ### Docker Compose Configuration
 
@@ -80,3 +94,17 @@ The `docker-compose.yml` file is configured to:
 2. Run `npm run docker:up` to start with database
 3. Run `npm run dev` to start Next.js on port 3030
 4. Access at `http://localhost:3030`
+
+### E2E tests (Playwright)
+
+One-time browser install (required before first run):
+
+```bash
+npm run test:e2e:install
+```
+
+Run auth flow tests (dev server on `:3030`, Supabase up):
+
+```bash
+npm run test:e2e
+```
