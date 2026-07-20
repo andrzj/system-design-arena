@@ -54,6 +54,7 @@ export async function createSession(userId: string | null, problemId: number) {
 export async function getSessionByUuid(sessionUuid: string) {
   return prisma.designSession.findUnique({
     where: { sessionUuid },
+    include: { problem: true },
   });
 }
 

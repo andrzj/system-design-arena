@@ -1,15 +1,16 @@
-import React from 'react';
-import { getProblems } from '@/lib/db';
 import ProblemList from '@/components/problems/ProblemList';
+import { Footer } from '@/components/shared/footer';
+import { getPublicProblems } from '@/lib/problems/queries';
 
-export const dynamic = 'force-dynamic'; // fetch at request time
-
-async function fetchProblems() {
-  return getProblems();
-}
+export const dynamic = 'force-dynamic';
 
 export default async function ProblemsPage() {
-  const problems = await fetchProblems();
+  const problems = await getPublicProblems();
 
-  return <ProblemList initialProblems={problems} />;
+  return (
+    <>
+      <ProblemList initialProblems={problems} />
+      <Footer />
+    </>
+  );
 }

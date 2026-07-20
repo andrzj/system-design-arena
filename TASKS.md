@@ -1,25 +1,29 @@
 # System Design Arena — Implementation Tasks
 
 > **Single source of truth** for building System Design Arena.  
-> Product requirements: [`systemdesignarena_prd.md`](./systemdesignarena_prd.md)
+> Product requirements: `[systemdesignarena_prd.md](./systemdesignarena_prd.md)`
 
 ---
 
 ## Tech Stack
 
-| Layer | Choice | Notes |
-|---|---|---|
-| Framework | **Next.js 16** (App Router, Turbopack) | RSC, server actions, route handlers |
-| Styling | **Tailwind CSS v4** + **shadcn/ui** | Dark theme, Radix primitives |
-| Language | **TypeScript** (strict) | |
-| Database | **PostgreSQL** (Supabase-hosted) via **Prisma ORM** | Schema-first, typed queries, versioned migrations |
-| Auth | **Supabase Auth** (`@supabase/ssr`) | Email/password + OAuth; session cookies via middleware |
-| Canvas | **React Flow** (`@xyflow/react` v12) | Custom nodes, palette, minimap |
-| State | **Zustand** (canvas/session) | |
-| AI | **OpenRouter** | Dual judge calls (Rigor + Pragmatism) |
-| Payments | **Stripe** + webhooks | Yearly ($49/yr), SBC manual tier |
-| Testing | **Vitest** + **Playwright** | Unit + E2E |
-| Deployment | **Vercel** | Connects to Supabase Postgres + Auth |
+
+| Layer      | Choice                                              | Notes                                                  |
+| ---------- | --------------------------------------------------- | ------------------------------------------------------ |
+| Framework  | **Next.js 16** (App Router, Turbopack)              | RSC, server actions, route handlers                    |
+| Styling    | **Tailwind CSS v4** + **shadcn/ui**                 | Dark theme, Radix primitives                           |
+| Language   | **TypeScript** (strict)                             |                                                        |
+| Database   | **PostgreSQL** (Supabase-hosted) via **Prisma ORM** | Schema-first, typed queries, versioned migrations      |
+| Auth       | **Supabase Auth** (`@supabase/ssr`)                 | Email/password + OAuth; session cookies via middleware |
+| Canvas     | **React Flow** (`@xyflow/react` v12)                | Custom nodes, palette, minimap                         |
+| State      | **Zustand** (canvas/session)                        |                                                        |
+| AI         | **OpenRouter**                                      | Dual judge calls (Rigor + Pragmatism)                  |
+| Payments   | **Stripe** + webhooks                               | Yearly ($49/yr), SBC manual tier                       |
+| Testing    | **Vitest** + **Playwright**                         | Unit + E2E                                             |
+| Deployment | **Vercel**                                          | Connects to Supabase Postgres + Auth                   |
+
+
+
 
 ### Architecture: Prisma + Supabase Auth
 
@@ -47,6 +51,8 @@
 - Optional: add RLS policies in a Prisma migration `*.sql` file for defense-in-depth on Supabase Postgres.
 
 ---
+
+
 
 ## Data Models (Prisma Schema)
 
@@ -221,6 +227,8 @@ model Article {
 }
 ```
 
+
+
 ### Migration workflow
 
 ```bash
@@ -237,11 +245,14 @@ npx prisma migrate deploy
 ```
 
 Add to `package.json`:
+
 ```json
 "prisma": { "seed": "tsx prisma/seed.ts" }
 ```
 
 ---
+
+
 
 ## Directory Structure
 
@@ -297,25 +308,31 @@ prisma/
 
 ---
 
+
+
 ## Progress Summary
 
-| Phase | Name | Status |
-|---|---|---|
-| 0 | Project Scaffold & Infra | 🟢 Complete (Stripe deferred) |
-| 1 | Prisma + Supabase Auth | 🟢 Complete (OAuth deferred) |
-| 2 | Landing & Marketing | 🟢 Complete |
-| 3 | Problem Library | 🟡 Partial |
-| 4 | Playground — Canvas | 🟡 Partial (components only) |
-| 5 | Chaos Engineering | 🔴 Not started |
-| 6 | AI Judging | 🔴 Not started |
-| 7 | Mermaid Tab (Premium) | 🔴 Not started |
-| 8 | Learning Library | 🔴 Not started |
-| 9 | Dashboard & Progress | 🔴 Not started |
-| 10 | Subscriptions & Payments | 🔴 Not started |
-| 11 | Notifications | 🔴 Not started |
-| 12 | Polish, Testing & Deploy | 🔴 Not started |
+
+| Phase | Name                     | Status                        |
+| ----- | ------------------------ | ----------------------------- |
+| 0     | Project Scaffold & Infra | 🟢 Complete (Stripe deferred) |
+| 1     | Prisma + Supabase Auth   | 🟢 Complete (OAuth deferred)  |
+| 2     | Landing & Marketing      | 🟢 Complete                   |
+| 3     | Problem Library          | 🟢 Complete                   |
+| 4     | Playground — Canvas      | 🟡 Partial (components only)  |
+| 5     | Chaos Engineering        | 🔴 Not started                |
+| 6     | AI Judging               | 🔴 Not started                |
+| 7     | Mermaid Tab (Premium)    | 🔴 Not started                |
+| 8     | Learning Library         | 🔴 Not started                |
+| 9     | Dashboard & Progress     | 🔴 Not started                |
+| 10    | Subscriptions & Payments | 🔴 Not started                |
+| 11    | Notifications            | 🔴 Not started                |
+| 12    | Polish, Testing & Deploy | 🔴 Not started                |
+
 
 ---
+
+
 
 ## Phase 0: Project Scaffold & Infrastructure
 
@@ -327,15 +344,17 @@ prisma/
 - [x] 0.6 Write `.env.example` with required env vars
 - [x] 0.7 **Install and configure Prisma** (`prisma`, `@prisma/client`)
 - [x] 0.8 **Write Prisma schema** (see above) and run `prisma migrate dev --name init`
-- [x] 0.9 **Create `prisma/seed.ts`**: 5+ problems, 27 articles across 3 categories
+- [x] 0.9 **Create** `prisma/seed.ts`: 5+ problems, 27 articles across 3 categories
 - [x] 0.10 Add shadcn/ui components (Button, Card, Tabs, Dialog, Slider, etc.)
 - [x] 0.11 Set up LLM wrapper in `src/lib/scoring/openrouter.ts` (OpenAI-compatible `LLM_*` env vars)
 - [ ] 0.12 Configure Stripe (products, prices, webhook endpoint stub) — **deferred to Phase 10**
 - [x] 0.13 Set up CI (GitHub Actions: lint + typecheck + test)
-- [x] 0.14 **Migrate away from `supabase/schema.sql`** — schema lives in Prisma migrations only
-- [x] 0.15 **Replace `supabaseService` CRUD** with Prisma client in route handlers
+- [x] 0.14 **Migrate away from** `supabase/schema.sql` — schema lives in Prisma migrations only
+- [x] 0.15 **Replace** `supabaseService` **CRUD** with Prisma client in route handlers
 
 ---
+
+
 
 ## Phase 1: Supabase Authentication & User Profiles
 
@@ -351,6 +370,8 @@ prisma/
 
 ---
 
+
+
 ## Phase 2: Landing & Marketing Pages
 
 - [x] 2.1 Hero section — heading, subtext, "Get started" CTA
@@ -364,40 +385,53 @@ prisma/
 
 ---
 
+
+
 ## Phase 3: Problem Library
 
 - [x] 3.1 `/problems` page — list problems (currently via Supabase service; **migrate to Prisma**)
-- [ ] 3.2 Difficulty filter tabs: All / Easy / Medium / Hard
-- [ ] 3.3 Search bar — client-side filter on title/tags
-- [ ] 3.4 `ProblemCard` — difficulty badge, title, tags, brief, "Attempt" button
-- [ ] 3.5 `/problems/[slug]` problem brief page
+- [x] 3.2 Difficulty filter tabs: All / Easy / Medium / Hard
+- [x] 3.3 Search bar — client-side filter on title/tags
+- [x] 3.4 `ProblemCard` — difficulty badge, title, tags, brief, "Attempt" button
+- [x] 3.5 `/problems/[slug]` problem brief page
   - Problem #, title, difficulty, tags
   - Full requirements (markdown)
   - Key considerations
   - **Learn Before Solving** — links to related articles
   - Reference architecture display
   - "Start" / "Start New Session" → creates session, redirects to `/session/[uuid]`
-- [ ] 3.6 `ReferenceArchitecture` component — render stored JSON flow
+- [x] 3.6 `ReferenceArchitecture` component — render stored JSON flow
 
 ---
 
+
+
 ## Phase 4: Playground — Canvas (Core Feature)
 
+
+
 ### 4.1 Session Shell
+
 - [ ] 4.1.1 `session/[uuid]/page.tsx` — playground layout with tabs (Canvas, Chaos, Mermaid)
 - [ ] 4.1.2 `SessionHeader` — problem title, status badge, simulation controls
 - [ ] 4.1.3 Load session from API on mount (nodes, edges, settings) via Prisma
 - [ ] 4.1.4 Auto-save every 10s via PUT API
 
+
+
 ### 4.2 Sliders & Sim Controls
+
 - [ ] 4.2.1 `SpeedSlider` — range 0–5, default 1, shows "Speed X×"
 - [ ] 4.2.2 `TrafficSlider` — range 0–5, default 1
 - [ ] 4.2.3 `ReadWriteSlider` — range 0–1, default per-problem (0.92 for URL Shortener)
 - [ ] 4.2.4 Sims counter badge — "X/1 sims today"
 - [ ] 4.2.5 Start/Stop simulation button — toggles status, tracks daily usage server-side
 
+
+
 ### 4.3 React Flow Canvas
-- [x] 4.3.1 React Flow instance with custom node types (initial `Canvas.tsx`)
+
+- [ ] 4.3.1 React Flow instance with custom node types (initial `Canvas.tsx`)
 - [ ] 4.3.2 `SystemNode` — left/right handles, label, replica controls, notes icon
 - [ ] 4.3.3 Node visual: blue 2px border, semi-transparent bg, min-width 110px, monospace label
 - [ ] 4.3.4 Connection validation: source → target only
@@ -405,8 +439,11 @@ prisma/
 - [ ] 4.3.6 Node drag & select
 - [ ] 4.3.7 Multi-node selection (shift+click, box select)
 
+
+
 ### 4.4 Component Palette
-- [x] 4.4.7 All 44 component definitions in `src/lib/canvas/components.ts` (in progress — align with PRD list)
+
+- [ ] 4.4.7 All 44 component definitions in `src/lib/canvas/components.ts` (in progress — align with PRD list)
 - [ ] 4.4.1 `ComponentPalette` sidebar with categorized accordions
 - [ ] 4.4.2 Categories: Client, Traffic & Edge, Compute, Storage, Messaging, Observability, Network, AI & Agents, External
 - [ ] 4.4.3 Search filter textbox
@@ -414,14 +451,20 @@ prisma/
 - [ ] 4.4.5 "+" button per component — adds node at default position
 - [ ] 4.4.6 Drag-to-add from palette to canvas
 
+
+
 ### 4.5 Node Controls
+
 - [ ] 4.5.1 Replica count (+/−), min=1, disabled at min
 - [ ] 4.5.2 Implementation notes — redirect to sign-in if anonymous; save via Prisma if authenticated
 - [ ] 4.5.3 Delete node — backspace/delete key or context menu
 - [ ] 4.5.4 Node enable/disable toggle (disabled button on free tier per PRD)
 - [ ] 4.5.5 Tooltip — component description on hover
 
+
+
 ### 4.6 Canvas Toolbar
+
 - [ ] 4.6.1 Zoom in/out (React Flow controls)
 - [ ] 4.6.2 Fit view
 - [ ] 4.6.3 Toggle interactivity (lock/unlock)
@@ -429,11 +472,17 @@ prisma/
 - [ ] 4.6.5 Live Metrics button (visible when sim active)
 - [ ] 4.6.6 Quick Chaos button — one-click random chaos event
 
+
+
 ### 4.7 Tutorial
+
 - [ ] 4.7.1 "Start tutorial" button — guided overlay
 - [ ] 4.7.2 Walkthrough: add component → connect → replicas → run sim → score
 
+
+
 ### 4.8 Backend APIs (Prisma-backed route handlers)
+
 - [ ] 4.8.1 `POST /api/sessions` — create session with problem ID
 - [ ] 4.8.2 `GET /api/sessions/[uuid]` — full session (nodes, edges, settings)
 - [ ] 4.8.3 `PUT /api/sessions/[uuid]` — update session settings (sliders)
@@ -443,6 +492,8 @@ prisma/
 - [ ] 4.8.7 `PUT /api/sessions/[uuid]/sim` — start/stop sim, increment daily counter
 
 ---
+
+
 
 ## Phase 5: Chaos Engineering Tab
 
@@ -456,6 +507,8 @@ prisma/
 - [ ] 5.8 Persist `ChaosLog` rows via Prisma
 
 ---
+
+
 
 ## Phase 6: AI Judging System
 
@@ -474,6 +527,8 @@ prisma/
 
 ---
 
+
+
 ## Phase 7: Mermaid Tab (Premium)
 
 - [ ] 7.1 `MermaidTab` with paywall state
@@ -484,6 +539,8 @@ prisma/
 - [ ] 7.6 "Unlock Mermaid" link to `/upgrade`
 
 ---
+
+
 
 ## Phase 8: Learning Library
 
@@ -498,6 +555,8 @@ prisma/
 
 ---
 
+
+
 ## Phase 9: User Dashboard & Progress
 
 - [ ] 9.1 `/dashboard` — authenticated home
@@ -509,6 +568,8 @@ prisma/
 - [ ] 9.7 `/settings` — account info, delete account
 
 ---
+
+
 
 ## Phase 10: Subscriptions & Payments
 
@@ -524,6 +585,8 @@ prisma/
 
 ---
 
+
+
 ## Phase 11: Notifications
 
 - [ ] 11.1 `NotificationsBell` with F8 keyboard shortcut
@@ -532,6 +595,8 @@ prisma/
 - [ ] 11.4 Polling when score is processing
 
 ---
+
+
 
 ## Phase 12: Polish, Testing & Deployment
 
@@ -551,36 +616,46 @@ prisma/
 
 ---
 
+
+
 ## Reference: 44 Canvas Components
 
 Full definitions live in `src/lib/canvas/components.ts`. Categories:
 
-| Category | Components |
-|---|---|
-| Client (2) | Client, Mobile |
-| Traffic & Edge (6) | DNS, CDN, Load Balancer, WAF, API Gateway, Ingress |
-| Compute (8) | App Server, Worker, Serverless, Auth Service, Search, Scheduler, Notifications, Analytics |
-| Storage (6) | SQL Database, NoSQL DB, Cache, Object Store, Data Warehouse, Vector DB |
-| Messaging (4) | Message Queue, Pub/Sub, Event Stream, Kafka |
-| Observability (5) | Metrics, Logs, Tracing, Alerting, Health Check |
-| Network (5) | VPC, Subnet, NAT Gateway, VPN, Service Mesh |
-| AI & Agents (5) | LLM Gateway, Orchestrator, Tool Registry, Memory Fabric, Safety Mesh |
-| External (3) | 3rd Party API, Payment, Email |
+
+| Category           | Components                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| Client (2)         | Client, Mobile                                                                            |
+| Traffic & Edge (6) | DNS, CDN, Load Balancer, WAF, API Gateway, Ingress                                        |
+| Compute (8)        | App Server, Worker, Serverless, Auth Service, Search, Scheduler, Notifications, Analytics |
+| Storage (6)        | SQL Database, NoSQL DB, Cache, Object Store, Data Warehouse, Vector DB                    |
+| Messaging (4)      | Message Queue, Pub/Sub, Event Stream, Kafka                                               |
+| Observability (5)  | Metrics, Logs, Tracing, Alerting, Health Check                                            |
+| Network (5)        | VPC, Subnet, NAT Gateway, VPN, Service Mesh                                               |
+| AI & Agents (5)    | LLM Gateway, Orchestrator, Tool Registry, Memory Fabric, Safety Mesh                      |
+| External (3)       | 3rd Party API, Payment, Email                                                             |
+
 
 ---
+
+
 
 ## Reference: 30 Chaos Events
 
 Full definitions live in `src/lib/chaos/events.ts`. Categories:
 
-| Category | Count | Examples |
-|---|---|---|
-| Infrastructure | 10 | AZ outage, data center, instance crash/slow, disk failure/corruption, IOPS, file system, VM CPU, host hardware |
-| Network | 11 | partition, cross-region loss, packet loss, high latency, bandwidth throttle, connection flap, LB degradation, backend port, health check, TLS, DNS |
-| Application | 8 | memory leak, OOM, thread pool, deadlock, cache stampede, error storm, CPU spike |
-| Global | 1 | traffic surge ×3 RPS |
+
+| Category       | Count | Examples                                                                                                                                           |
+| -------------- | ----- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Infrastructure | 10    | AZ outage, data center, instance crash/slow, disk failure/corruption, IOPS, file system, VM CPU, host hardware                                     |
+| Network        | 11    | partition, cross-region loss, packet loss, high latency, bandwidth throttle, connection flap, LB degradation, backend port, health check, TLS, DNS |
+| Application    | 8     | memory leak, OOM, thread pool, deadlock, cache stampede, error storm, CPU spike                                                                    |
+| Global         | 1     | traffic surge ×3 RPS                                                                                                                               |
+
 
 ---
+
+
 
 ## Implementation Order
 
@@ -597,6 +672,8 @@ Week 8:  Phase 11 + 12 (Notifications, Polish, QA, Deploy)
 
 ---
 
+
+
 ## Open Questions & Risks
 
 1. **Simulation depth** — MVP uses approximate effects from node types + chaos events, not a full discrete-event simulator.
@@ -604,10 +681,12 @@ Week 8:  Phase 11 + 12 (Notifications, Polish, QA, Deploy)
 3. **Canvas performance** — Memoize nodes; consider virtualization at 20+ nodes.
 4. **Mermaid sync** — MVP: canvas → Mermaid only. Bidirectional is post-MVP.
 5. **Daily sim limit** — Must be enforced server-side on Profile, not client-only.
-6. **Legacy `supabase/schema.sql`** — Deprecate once Prisma migrations are applied. Do not maintain two schemas.
+6. **Legacy** `supabase/schema.sql` — Deprecate once Prisma migrations are applied. Do not maintain two schemas.
 7. **SBC approval** — Needs admin tool or manual DB update via Prisma Studio.
 
 ---
+
+
 
 ## Environment Variables
 
@@ -637,4 +716,4 @@ NEXT_PUBLIC_APP_URL="http://localhost:3030"
 
 ---
 
-*Living document — update checkboxes as work completes. Refer to [`systemdesignarena_prd.md`](./systemdesignarena_prd.md) for product behavior.*
+*Living document — update checkboxes as work completes. Refer to* `[systemdesignarena_prd.md](./systemdesignarena_prd.md)` *for product behavior.*

@@ -1,43 +1,109 @@
-import { getProblemBySlug } from '@/lib/db';
-import type { Problem } from '@prisma/client';
-
-
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-async function fetchProblem(slug: string): Promise<Problem | null> {
-  return getProblemBySlug(slug);
+import { ReferenceArchitecture } from '@/components/problems/reference-architecture';
+import { StartSessionButton } from '@/components/problems/start-session-button';
+import { Footer } from '@/components/shared/footer';
+import { difficultyBadgeClass, formatDifficulty } from '@/lib/marketing/difficulty';
+import { formatProblemNumber, getPublicProblemBySlug, getRelatedArticles } from '@/lib/problems/queries';
+
+function SectionBlock({ title, content }: { title: string; content: string }) {
+  return (
+    <section className="space-y-4">
+      <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-tight">{title}</h2>
+      <div className="rounded-xl border border-border/80 bg-card/40 p-6">
+        <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">{content}</p>
+      </div>
+    </section>
+  );
 }
 
-export default async function ProblemPage({ params }: { params: { slug: string } }) {
-  const problem = await fetchProblem(params.slug);
+export default async function ProblemPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const problem = await getPublicProblemBySlug(slug);
+
   if (!problem) {
     notFound();
-    return null;
   }
 
+  const relatedArticles = await getRelatedArticles(problem.id);
+
   return (
-    <div className="max-w-4xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-4">{problem.title}</h1>
-      <div className="flex items-center mb-2">
-        <span className={`px-2 py-1 text-xs rounded ${problem.difficulty === 'easy' ? 'bg-green-100 text-green-800' : problem.difficulty === 'medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}`}
-        >
-          {problem.difficulty}
-        </span>
-        <span className="ml-4 text-sm text-muted-foreground">
-          {problem.tags.join(', ')}
-        </span>
+    <>
+      <div className="mx-auto max-w-4xl px-6 py-12">
+        <div className="space-y-6">
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="font-mono text-sm text-muted-foreground">{formatProblemNumber(problem.order)}</span>
+            <span
+              className={`rounded-md px-2.5 py-1 text-xs font-medium ${difficultyBadgeClass(problem.difficulty)}`}
+            >
+              {formatDifficulty(problem.difficulty)}
+            </span>
+          </div>
+
+          <div>
+            <h1 className="font-[family-name:var(--font-heading)] text-4xl font-semibold tracking-tight sm:text-5xl">
+              {problem.title}
+            </h1>
+            <p className="mt-4 max-w-3xl text-base leading-relaxed text-muted-foreground">{problem.brief}</p>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {problem.tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-md border border-border/80 bg-background/60 px-2.5 py-1 font-mono text-xs text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-12 space-y-10">
+          <SectionBlock title="Requirements" content={problem.requirements} />
+          <SectionBlock title="Key considerations" content={problem.keyConsiderations} />
+
+          {relatedArticles.length > 0 ? (
+            <section className="space-y-4">
+              <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-tight">
+                Learn before solving
+              </h2>
+              <ul className="grid gap-3 sm:grid-cols-2">
+                {relatedArticles.map((article) => (
+                  <li key={article.id}>
+                    <Link
+                      href={`/learn/${article.slug}`}
+                      className="block rounded-xl border border-border/80 bg-card/40 p-4 transition-colors hover:border-primary/40 hover:bg-card/70"
+                    >
+                      <p className="font-mono text-[11px] uppercase tracking-wide text-muted-foreground">
+                        {article.category.replace('-', ' ')}
+                      </p>
+                      <p className="mt-2 font-medium">{article.title}</p>
+                      <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">{article.summary}</p>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
+          <section className="space-y-4">
+            <h2 className="font-[family-name:var(--font-heading)] text-2xl font-semibold tracking-tight">
+              Reference architecture
+            </h2>
+            <ReferenceArchitecture data={problem.referenceArchitecture} />
+          </section>
+
+          <div className="flex flex-col gap-3 border-t border-border/60 pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-muted-foreground">
+              Opens a new design session on the blueprint canvas for this problem.
+            </p>
+            <StartSessionButton problemSlug={problem.slug} />
+          </div>
+        </div>
       </div>
-      <p className="mb-6">{problem.brief}</p>
-      <h2 className="text-2xl font-semibold mb-2">Requirements</h2>
-      <p className="whitespace-pre-line">{problem.requirements}</p>
-      <h2 className="text-2xl font-semibold mb-2 mt-6">Key Considerations</h2>
-      <p className="whitespace-pre-line">{problem.keyConsiderations}</p>
-      <a
-        href={`/session/create?problemId=${problem.id}`}
-        className="inline-block mt-8 px-6 py-3 bg-primary text-primary-foreground rounded hover:bg-primary/90"
-      >
-        Start Session
-      </a>
-    </div>
+      <Footer />
+    </>
   );
 }
