@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Profile extends Supabase auth.users — id matches auth.users.id (UUID)
+model Profile {
+  id                   String    @id @db.Uuid
+  email                String?
+  name                 String?
+  avatarUrl            String?   @map("avatar_url")
+  subscriptionTier     String    @default("free") @map("subscription_tier") // free | yearly | sbc
+  stripeCustomerId     String?   @unique @map("stripe_customer_id")
+  stripeSubscriptionId String?   @map("stripe_subscription_id")
+  sbcMemberEmail       String?   @map("sbc_member_email")
+  simsUsedToday        Int       @default(0) @map("sims_used_today")
+  lastSimDate          DateTime? @map("last_sim_date") @db.Date
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+
+  sessions     DesignSession[]
+  scoreResults ScoreResult[]
+
+  @@map("profiles")
+}
+
+model Problem {
+  id                    Int      @id @default(autoincrement())
+  title                 String
+  slug                  String   @unique
+  difficulty            String   // easy | medium | hard
+  tags                  String[]
+  brief                 String
+  requirements          String
+  keyConsiderations     String   @map("key_considerations")
+  referenceArchitecture Json?    @map("reference_architecture")
+  order                 Int      @default(0) @map("order")
+  isPublic              Boolean  @default(true) @map("is_public")
+  createdAt             DateTime @default(now()) @map("created_at")
+  updatedAt             DateTime @updatedAt @map("updated_at")
+
+  sessions DesignSession[]
+
+  @@map("problems")
+}
+
+model DesignSession {
+  id             Int      @id @default(autoincrement())
+  userId         String?  @map("user_id") @db.Uuid
+  problemId      Int      @map("problem_id")
+  sessionUuid    String   @unique @default(cuid()) @map("session_uuid")
+  status         String   @default("in_progress") // in_progress | completed
+  speedSetting   Float    @default(1.0) @map("speed_setting")
+  trafficSetting Float    @default(1.0) @map("traffic_setting")
+  readWriteRatio Float    @default(0.92) @map("read_write_ratio")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  user         Profile?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+  problem      Problem       @relation(fields: [problemId], references: [id])
+  nodes        CanvasNode[]
+  edges        CanvasEdge[]
+  chaosLogs    ChaosLog[]
+  scoreResults ScoreResult[]
+
+  @@index([userId])
+  @@index([problemId])
+  @@map("design_sessions")
+}
+
+model CanvasNode {
+  id                  Int      @id @default(autoincrement())
+  sessionId           Int      @map("session_id")
+  nodeUuid            String   @unique @map("node_uuid")
+  componentType       String   @map("component_type")
+  label               String?
+  x                   Float    @default(0)
+  y                   Float    @default(0)
+  replicas            Int      @default(1)
+  implementationNotes String?  @map("implementation_notes")
+  isDisabled          Boolean  @default(false) @map("is_disabled")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  session     DesignSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sourceEdges CanvasEdge[]  @relation("sourceNode")
+  targetEdges CanvasEdge[]  @relation("targetNode")
+  chaosLogs   ChaosLog[]
+
+  @@index([sessionId])
+  @@map("canvas_nodes")
+}
+
+model CanvasEdge {
+  id           Int      @id @default(autoincrement())
+  sessionId    Int      @map("session_id")
+  edgeUuid     String   @unique @map("edge_uuid")
+  sourceNodeId Int      @map("source_node_id")
+  targetNodeId Int      @map("target_node_id")
+  label        String?
+  style        String?  // solid | dashed
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  sourceNode CanvasNode    @relation("sourceNode", fields: [sourceNodeId], references: [id], onDelete: Cascade)
+  targetNode CanvasNode    @relation("targetNode", fields: [targetNodeId], references: [id], onDelete: Cascade)
+  session    DesignSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("canvas_edges")
+}
+
+model ChaosLog {
+  id           Int      @id @default(autoincrement())
+  sessionId    Int      @map("session_id")
+  chaosEventId String   @map("chaos_event_id")
+  targetNodeId Int?     @map("target_node_id")
+  timestamp    DateTime @default(now())
+  result       Json?
+
+  session    DesignSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  targetNode CanvasNode?   @relation(fields: [targetNodeId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@map("chaos_logs")
+}
+
+model ScoreResult {
+  id                   Int      @id @default(autoincrement())
+  sessionId            Int      @map("session_id")
+  userId               String?  @map("user_id") @db.Uuid
+  judgeRigorScore      Int?     @map("judge_rigor_score")
+  judgePragmatismScore Int?     @map("judge_pragmatism_score")
+  consensusVerdict     String?  @map("consensus_verdict") // pass | fail | borderline
+  writtenFeedback      String?  @map("written_feedback")
+  debateSummary        String?  @map("debate_summary")
+  modelUsed            String   @map("model_used")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  session DesignSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  user    Profile?      @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([sessionId])
+  @@index([userId])
+  @@map("score_results")
+}
+
+model Article {
+  id                Int      @id @default(autoincrement())
+  title             String
+  slug              String   @unique
+  category          String   // foundations | feeds-storage | realtime-geo
+  summary           String
+  content           String
+  featured          Boolean  @default(false)
+  relatedProblemIds Int[]    @default([]) @map("related_problem_ids")
+  order             Int      @default(0) @map("order")
+  isPublished       Boolean  @default(true) @map("is_published")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("articles")
+}

@@ -1,11 +1,11 @@
 import React from 'react';
-import { supabaseService } from '@/lib/supabase/service';
+import { getProblems } from '@/lib/db';
 import ProblemList from '@/components/problems/ProblemList';
 
 export const dynamic = 'force-dynamic'; // fetch at request time
 
 async function fetchProblems() {
-  return supabaseService.getProblems();
+  return getProblems();
 }
 
 export default async function ProblemsPage() {

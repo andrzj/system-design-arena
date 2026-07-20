@@ -1,3 +1,5 @@
+# ⚠️ Deprecated — merged into [TASKS.md](./TASKS.md). Use Prisma + migrations and Supabase Auth.
+
 # System Design Arena — Implementation Task File
 
 ## Tech Stack Decisions

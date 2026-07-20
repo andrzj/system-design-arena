@@ -1,11 +1,11 @@
-import { supabaseService } from '@/lib/supabase/service';
-import type { Problem } from '@/lib/supabase/service';
+import { getProblemBySlug } from '@/lib/db';
+import type { Problem } from '@prisma/client';
 
 
 import { notFound } from 'next/navigation';
 
 async function fetchProblem(slug: string): Promise<Problem | null> {
-  return supabaseService.getProblemBySlug(slug);
+  return getProblemBySlug(slug);
 }
 
 export default async function ProblemPage({ params }: { params: { slug: string } }) {
@@ -31,7 +31,7 @@ export default async function ProblemPage({ params }: { params: { slug: string }
       <h2 className="text-2xl font-semibold mb-2">Requirements</h2>
       <p className="whitespace-pre-line">{problem.requirements}</p>
       <h2 className="text-2xl font-semibold mb-2 mt-6">Key Considerations</h2>
-      <p className="whitespace-pre-line">{problem.key_considerations}</p>
+      <p className="whitespace-pre-line">{problem.keyConsiderations}</p>
       <a
         href={`/session/create?problemId=${problem.id}`}
         className="inline-block mt-8 px-6 py-3 bg-primary text-primary-foreground rounded hover:bg-primary/90"

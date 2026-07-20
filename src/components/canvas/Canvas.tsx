@@ -15,7 +15,6 @@ import {
   Edge,
 } from '@xyflow/react';
 import { COMPONENT_DEFS } from '@/lib/canvas/components';
-import { supabaseService } from '@/lib/supabase/service';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthStore } from '@/store/auth-store';
 import { useCanvasStore, RFNode, RFEdge, NodeData, EdgeData } from '@/store/canvas-store';
@@ -153,30 +152,45 @@ export const Canvas: React.FC = () => {
     if (sessionId) {
       const loadSessionData = async () => {
         try {
-          const [nodeData, edgeData] = await Promise.all([
-            supabaseService.getNodesBySessionId(sessionId),
-            supabaseService.getEdgesBySessionId(sessionId),
-          ]);
+          const response = await fetch(`/api/sessions/${sessionId}/canvas`);
+          if (!response.ok) throw new Error('Failed to load session canvas');
+          const { nodes: nodeData, edges: edgeData } = (await response.json()) as {
+            nodes: Array<{
+              nodeUuid: string;
+              x: number;
+              y: number;
+              label: string | null;
+              componentType: string;
+              replicas: number;
+            }>;
+            edges: Array<{
+              edgeUuid: string;
+              sourceNodeId: number;
+              targetNodeId: number;
+              label: string | null;
+              style: string | null;
+            }>;
+          };
           // Convert database nodes to React Flow nodes
           const rfNodes: RFNode[] = nodeData.map((n) => ({
-            id: n.node_uuid,
+            id: n.nodeUuid,
             type: 'custom',
             position: { x: n.x, y: n.y },
             data: {
-              label: n.label || n.component_type,
-              componentType: n.component_type,
+              label: n.label || n.componentType,
+              componentType: n.componentType,
               replicas: n.replicas,
             },
           }));
           // Convert database edges to React Flow edges
           const rfEdges: RFEdge[] = edgeData.map((e) => ({
-            id: e.edge_uuid,
-            source: String(e.source_node_id),
-            target: String(e.target_node_id),
+            id: e.edgeUuid,
+            source: String(e.sourceNodeId),
+            target: String(e.targetNodeId),
             type: 'smoothstep',
             data: {
               label: e.label || '',
-              style: e.style,
+              style: (e.style as 'solid' | 'dashed' | null) ?? 'solid',
             },
           }));
           setNodes(rfNodes);
@@ -194,29 +208,29 @@ export const Canvas: React.FC = () => {
     if (!sessionId) return;
     const saveSessionData = async () => {
       try {
-        await supabaseService.deleteNodesBySessionId(sessionId);
-        await supabaseService.deleteEdgesBySessionId(sessionId);
-        await Promise.all([
-          supabaseService.createNodes(nodes.map((node) => ({
-            session_id: sessionId,
-            node_uuid: node.id,
-            component_type: node.data.componentType,
-            label: node.data.label,
-            x: node.position.x,
-            y: node.position.y,
-            replicas: node.data.replicas,
-            implementation_notes: null,
-            is_disabled: false,
-          }))),
-          supabaseService.createEdges(edges.map((edge) => ({
-            session_id: sessionId,
-            edge_uuid: edge.id,
-            source_node_id: parseInt(edge.source),
-            target_node_id: parseInt(edge.target),
-            label: edge.data?.label || null,
-            style: (edge.data?.style as 'solid' | 'dashed') || 'solid',
-          }))),
-        ]);
+        await fetch(`/api/sessions/${sessionId}/canvas`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nodes: nodes.map((node) => ({
+              nodeUuid: node.id,
+              componentType: node.data.componentType,
+              label: node.data.label,
+              x: node.position.x,
+              y: node.position.y,
+              replicas: node.data.replicas,
+              implementationNotes: null,
+              isDisabled: false,
+            })),
+            edges: edges.map((edge) => ({
+              edgeUuid: edge.id,
+              sourceNodeId: parseInt(edge.source),
+              targetNodeId: parseInt(edge.target),
+              label: edge.data?.label || null,
+              style: (edge.data?.style as 'solid' | 'dashed') || 'solid',
+            })),
+          }),
+        });
       } catch (error) {
         console.error('Failed to save session data:', error);
       }
