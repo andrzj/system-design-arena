@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/store/auth-store';
 
 import { UserMenu } from './UserMenu';
+import { NotificationsBell } from './NotificationsBell';
 
 const navLinks = [
   { href: '/learn', label: 'Learn' },
@@ -45,7 +46,10 @@ export function Header() {
           {isLoading ? (
             <div className="h-9 w-24 animate-pulse rounded-md bg-muted" aria-hidden="true" />
           ) : isAuthenticated ? (
-            <UserMenu />
+            <>
+              <NotificationsBell />
+              <UserMenu />
+            </>
           ) : (
             <>
               <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">

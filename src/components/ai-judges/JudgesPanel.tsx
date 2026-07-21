@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import type { SessionArchitecture } from '@/lib/scoring/serialize';
 import { useAuth } from '@/store/auth-store';
 import { useCanvasStore } from '@/store/canvas-store';
+import { useNotificationStore } from '@/store/notification-store';
 
 type ScoreResponse = {
   rigorScore: number | null;
@@ -29,6 +30,7 @@ export function JudgesPanel() {
   const readWriteRatio = useCanvasStore((s) => s.readWriteRatio);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<ScoreResponse | null>(null);
+  const addNotification = useNotificationStore((s) => s.addNotification);
 
   const scoreDesign = async () => {
     if (!sessionUuid) return;
@@ -67,7 +69,11 @@ export function JudgesPanel() {
         return;
       }
 
-      setResult((await res.json()) as ScoreResponse);
+      const score = (await res.json()) as ScoreResponse;
+      setResult(score);
+      addNotification('Score ready', score.consensusVerdict
+        ? `Verdict: ${score.consensusVerdict}`
+        : 'Qualitative feedback is available.');
     } finally {
       setLoading(false);
     }
