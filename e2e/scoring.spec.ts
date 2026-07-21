@@ -22,7 +22,8 @@ test.describe('Phase 6 AI judging', () => {
     await page.getByTestId('add-component-client').click();
     await page.getByRole('tab', { name: 'Judges' }).click();
     await page.getByTestId('score-design').click();
-    await expect(page.getByText(/## Strengths|Qualitative feedback/)).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByRole('heading', { name: 'Rigor Judge' })).toBeVisible({ timeout: 30_000 });
+    await expect(page.locator('.prose')).not.toBeEmpty({ timeout: 30_000 });
 
     const sessionUuid = page.url().match(/\/session\/([^/?#]+)/)?.[1];
     if (sessionUuid) {
