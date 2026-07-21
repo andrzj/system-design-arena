@@ -1,6 +1,3 @@
-// Chaos event definitions for the system design simulator
-// These represent the 30 disaster scenarios that can be triggered during a session
-
 export const CHAOS_EVENTS = [
   // Infrastructure Failures
   {
@@ -647,6 +644,8 @@ export const CHAOS_EVENTS = [
     }
   }
 ];
+
+export type ChaosEvent = (typeof CHAOS_EVENTS)[number];
 
 // Helper functions to get events by category
 export const getEventsByCategory = (category: string) => {

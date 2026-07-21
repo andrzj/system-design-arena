@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 
-import { SessionPlayground } from '@/components/session/SessionPlayground';
+import { SessionView } from '@/components/session/SessionView';
 import { getSessionByUuidOrThrow, serializeSession } from '@/lib/sessions/helpers';
 
 export default async function SessionPage({ params }: { params: Promise<{ uuid: string }> }) {
@@ -14,7 +14,7 @@ export default async function SessionPage({ params }: { params: Promise<{ uuid: 
   const data = serializeSession(session);
 
   return (
-    <SessionPlayground
+    <SessionView
       session={{
         id: data.id,
         sessionUuid: data.sessionUuid,
