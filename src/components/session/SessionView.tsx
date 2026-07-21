@@ -3,6 +3,7 @@
 import { useCallback } from 'react';
 
 import { ChaosTab } from '@/components/chaos/ChaosTab';
+import { JudgesPanel } from '@/components/ai-judges/JudgesPanel';
 import { SessionPlayground, type SessionData } from '@/components/session/SessionPlayground';
 import { pickRandomChaosEventId } from '@/lib/chaos/simulate';
 import { useCanvasStore } from '@/store/canvas-store';
@@ -48,6 +49,7 @@ export function SessionView({ session }: SessionViewProps) {
     <SessionPlayground
       session={session}
       chaosTab={<ChaosTab />}
+      judgesPanel={<JudgesPanel />}
       onQuickChaos={onQuickChaos}
     />
   );
