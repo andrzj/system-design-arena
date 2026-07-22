@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { ArticleContent } from '@/components/learn/ArticleContent';
 import { Button } from '@/components/ui/button';
 import { getArticleBySlug, getProblems } from '@/lib/db';
 
@@ -20,9 +21,7 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       <p className="font-mono text-xs uppercase tracking-wide text-muted-foreground">{article.category}</p>
       <h1 className="mt-2 font-[family-name:var(--font-heading)] text-3xl font-semibold">{article.title}</h1>
       <p className="mt-3 text-muted-foreground">{article.summary}</p>
-      <div className="prose prose-invert mt-8 max-w-none whitespace-pre-wrap text-sm leading-relaxed">
-        {article.content}
-      </div>
+      <ArticleContent content={article.content} />
 
       {related.length > 0 ? (
         <section className="mt-10">
