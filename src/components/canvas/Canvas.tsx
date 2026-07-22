@@ -22,7 +22,6 @@ import { CanvasToolbar } from '@/components/canvas/CanvasToolbar';
 import { CanvasTopControls } from '@/components/canvas/CanvasTopControls';
 import { FlowEdge } from '@/components/canvas/FlowEdge';
 import { SystemNode } from '@/components/canvas/SystemNode';
-import { LiveMetricsPanel } from '@/components/session/LiveMetricsPanel';
 import { useSimulationLoop } from '@/hooks/use-simulation-loop';
 import { getComponentByType } from '@/lib/canvas/components';
 import { isValidConnection } from '@/lib/canvas/validation';
@@ -241,7 +240,6 @@ function CanvasInner() {
           ) : null}
         </ReactFlow>
         <CanvasTopControls />
-        <LiveMetricsPanel />
         <CanvasToolbar />
       </div>
     </div>

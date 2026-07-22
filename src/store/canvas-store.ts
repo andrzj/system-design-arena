@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 
+import type { WorkbenchMode } from '@/lib/session/workbench-mode';
 import type { ActiveChaosEvent } from '@/lib/simulation/chaos-modifiers';
 import { computeSimulation, createQueueState, idleSnapshot } from '@/lib/simulation/engine';
 import { getProblemSimPreset } from '@/lib/simulation/problem-presets';
@@ -65,6 +66,7 @@ interface CanvasState {
   paletteMinimized: boolean;
   simulationSnapshot: SimulationSnapshot;
   notesPanelNodeId: string | null;
+  workbenchMode: WorkbenchMode;
   setNodes: (nodes: RFNode[]) => void;
   setEdges: (edges: RFEdge[]) => void;
   updateNode: (nodeId: string, updates: Partial<NodeData>) => void;
@@ -90,6 +92,7 @@ interface CanvasState {
   setPaletteMinimized: (minimized: boolean) => void;
   setSimulationSnapshot: (snapshot: SimulationSnapshot) => void;
   setNotesPanelNodeId: (nodeId: string | null) => void;
+  setWorkbenchMode: (mode: WorkbenchMode) => void;
   recomputeSimulation: () => void;
   initSession: (data: {
     sessionId: number;
@@ -156,6 +159,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
     queueState: createQueueState(),
   },
   notesPanelNodeId: null,
+  workbenchMode: 'design',
 
   recomputeSimulation: () => {
     const state = get();
@@ -254,6 +258,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   setPaletteMinimized: (minimized) => set({ paletteMinimized: minimized }),
   setSimulationSnapshot: (snapshot) => set({ simulationSnapshot: snapshot }),
   setNotesPanelNodeId: (nodeId) => set({ notesPanelNodeId: nodeId }),
+  setWorkbenchMode: (mode) => set({ workbenchMode: mode }),
   initSession: (data) => {
     const preset = getProblemSimPreset(data.problemTitle);
     set({
@@ -276,6 +281,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       simulationQueueState: createQueueState(),
       simulationSnapshot: idleSnapshot(data.nodes, data.edges),
       notesPanelNodeId: null,
+      workbenchMode: 'design',
     });
   },
   resetCanvas: () =>
@@ -309,5 +315,6 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
         queueState: createQueueState(),
       },
       notesPanelNodeId: null,
+      workbenchMode: 'design',
     }),
 }));

@@ -1,11 +1,16 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Canvas } from '@/components/canvas/Canvas';
 import { SessionHeader } from '@/components/session/SessionHeader';
+import { SessionInspector } from '@/components/session/SessionInspector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { JudgeScoreResult } from '@/lib/scoring/score-result';
+import {
+  type WorkbenchMode,
+  workbenchModeLabel,
+} from '@/lib/session/workbench-mode';
 import { useCanvasStore, type RFEdge, type RFNode } from '@/store/canvas-store';
 
 export type SessionData = {
@@ -62,8 +67,14 @@ export function SessionPlayground({
   mermaidTab,
   judgesPanel,
 }: SessionPlaygroundProps) {
+  const [mode, setMode] = useState<WorkbenchMode>('design');
   const initSession = useCanvasStore((s) => s.initSession);
   const resetCanvas = useCanvasStore((s) => s.resetCanvas);
+  const setWorkbenchMode = useCanvasStore((s) => s.setWorkbenchMode);
+
+  useEffect(() => {
+    setWorkbenchMode(mode);
+  }, [mode, setWorkbenchMode]);
 
   useEffect(() => {
     const rfNodes: RFNode[] = session.nodes.map((n) => ({
@@ -112,26 +123,39 @@ export function SessionPlayground({
     return () => resetCanvas();
   }, [session, initSession, resetCanvas]);
 
+  const modeTabs = (
+    <TabsList className="wb-transition h-9">
+      {(['design', 'chaos', 'diagram', 'score'] as WorkbenchMode[]).map((value) => (
+        <TabsTrigger key={value} value={value} className="wb-transition">
+          {workbenchModeLabel(value)}
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  );
+
   return (
-    <div className="flex h-[calc(100vh-4rem)] flex-col">
-      <SessionHeader problemTitle={session.problem.title} />
-      <Tabs defaultValue="canvas" className="flex min-h-0 flex-1 flex-col">
-        <TabsList className="ml-auto mr-4 mt-2 w-fit">
-          <TabsTrigger value="canvas">Canvas</TabsTrigger>
-          <TabsTrigger value="chaos">Chaos</TabsTrigger>
-          <TabsTrigger value="mermaid">Mermaid</TabsTrigger>
-          <TabsTrigger value="judges">Judges</TabsTrigger>
-        </TabsList>
-        <TabsContent value="canvas" className="mt-0 min-h-0 flex-1 data-[state=inactive]:hidden">
-          <Canvas />
-        </TabsContent>
+    <div className="flex h-[calc(100dvh-4rem)] flex-col">
+      <Tabs
+        value={mode}
+        onValueChange={(v) => setMode(v as WorkbenchMode)}
+        className="flex min-h-0 flex-1 flex-col"
+      >
+        <SessionHeader problemTitle={session.problem.title} modeTabs={modeTabs} />
+
+        <div className={mode === 'design' ? 'flex min-h-0 flex-1' : 'hidden'}>
+          <div className="min-h-0 min-w-0 flex-1">
+            <Canvas />
+          </div>
+          <SessionInspector />
+        </div>
+
         <TabsContent value="chaos" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
           {chaosTab}
         </TabsContent>
-        <TabsContent value="mermaid" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
+        <TabsContent value="diagram" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
           {mermaidTab}
         </TabsContent>
-        <TabsContent value="judges" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
+        <TabsContent value="score" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
           {judgesPanel}
         </TabsContent>
       </Tabs>

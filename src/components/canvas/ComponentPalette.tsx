@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { COMPONENT_DEFS, getCategories } from '@/lib/canvas/components';
+import { showComponentPalette } from '@/lib/session/workbench-mode';
 import { cn } from '@/lib/utils';
 import { useCanvasStore, type RFNode } from '@/store/canvas-store';
 import { Input } from '@/components/ui/input';
@@ -22,6 +23,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 export function ComponentPalette() {
+  const workbenchMode = useCanvasStore((s) => s.workbenchMode);
   const [search, setSearch] = useState('');
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(getCategories().map((c) => [c, true])),
@@ -41,6 +43,8 @@ export function ComponentPalette() {
         c.description.toLowerCase().includes(q),
     );
   }, [search]);
+
+  if (!showComponentPalette(workbenchMode)) return null;
 
   const addNode = (componentType: string, label: string, description: string) => {
     const nodeId = uuidv4();
