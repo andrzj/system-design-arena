@@ -41,7 +41,7 @@ test.describe('Phase 3 problem library', () => {
     createdSessionUuid = match![1];
 
     await expect(page.getByRole('heading', { name: 'Design a URL Shortener' })).toBeVisible();
-    await expect(page.getByRole('tab', { name: 'Canvas' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Design' })).toBeVisible();
 
     await expect.poll(async () =>
       prisma.designSession.findUnique({ where: { sessionUuid: createdSessionUuid! } }),
