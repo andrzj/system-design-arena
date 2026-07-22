@@ -9,6 +9,7 @@ type EdgeInput = {
   targetNodeUuid: string;
   label?: string | null;
   style?: string | null;
+  intent?: string | null;
 };
 
 export async function POST(

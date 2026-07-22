@@ -213,6 +213,7 @@ export async function upsertCanvasEdges(
     targetNodeUuid: string;
     label?: string | null;
     style?: string | null;
+    intent?: string | null;
   }>,
 ) {
   const nodeMap = new Map(
@@ -241,12 +242,14 @@ export async function upsertCanvasEdges(
           targetNodeId,
           label: edge.label,
           style: edge.style ?? 'solid',
+          intent: edge.intent ?? null,
         },
         update: {
           sourceNodeId,
           targetNodeId,
           label: edge.label,
           style: edge.style ?? 'solid',
+          intent: edge.intent ?? null,
         },
       });
     }),

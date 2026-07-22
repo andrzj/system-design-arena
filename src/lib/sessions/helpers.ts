@@ -68,6 +68,7 @@ export function serializeSession(session: NonNullable<Awaited<ReturnType<typeof 
       targetNodeUuid: edge.targetNode.nodeUuid,
       label: edge.label,
       style: edge.style,
+      intent: edge.intent,
     })),
     latestScore: session.scoreResults[0]
       ? {

@@ -20,7 +20,6 @@ import '@xyflow/react/dist/style.css';
 import { ComponentPalette } from '@/components/canvas/ComponentPalette';
 import { CanvasToolbar } from '@/components/canvas/CanvasToolbar';
 import { CanvasTopControls } from '@/components/canvas/CanvasTopControls';
-import { EdgeIntentPanel } from '@/components/canvas/EdgeIntentPanel';
 import { FlowEdge } from '@/components/canvas/FlowEdge';
 import { SystemNode } from '@/components/canvas/SystemNode';
 import { LiveMetricsPanel } from '@/components/session/LiveMetricsPanel';
@@ -192,6 +191,10 @@ function CanvasInner() {
     [setSelectedEdgeId],
   );
 
+  const onPaneClick = useCallback(() => {
+    setSelectedEdgeId(null);
+  }, [setSelectedEdgeId]);
+
   return (
     <div className="flex h-full min-h-0">
       <ComponentPalette />
@@ -206,6 +209,7 @@ function CanvasInner() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onEdgeClick={onEdgeClick}
+          onPaneClick={onPaneClick}
           onNodesDelete={onNodesDelete}
           onEdgesDelete={onEdgesDelete}
           deleteKeyCode={['Backspace', 'Delete']}
@@ -236,7 +240,6 @@ function CanvasInner() {
             />
           ) : null}
         </ReactFlow>
-        <EdgeIntentPanel />
         <CanvasTopControls />
         <LiveMetricsPanel />
         <CanvasToolbar />

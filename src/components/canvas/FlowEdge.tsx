@@ -3,6 +3,7 @@
 import { memo, useMemo } from 'react';
 import { BaseEdge, EdgeLabelRenderer, getSmoothStepPath, type EdgeProps } from '@xyflow/react';
 
+import { EdgeIntentPopover } from '@/components/canvas/EdgeIntentPopover';
 import { BASE_RPS } from '@/lib/simulation/constants';
 import { cn } from '@/lib/utils';
 import { useCanvasStore } from '@/store/canvas-store';
@@ -156,6 +157,8 @@ function FlowEdgeComponent({
           </div>
         </EdgeLabelRenderer>
       ) : null}
+
+      {selected ? <EdgeIntentPopover edgeId={id} labelX={labelX} labelY={labelY} /> : null}
     </>
   );
 }

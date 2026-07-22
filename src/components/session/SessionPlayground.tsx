@@ -45,6 +45,7 @@ export type SessionData = {
     targetNodeUuid: string;
     label: string | null;
     style: string | null;
+    intent: string | null;
   }>;
 };
 
@@ -89,6 +90,7 @@ export function SessionPlayground({
       data: {
         label: e.label ?? '',
         style: (e.style as 'solid' | 'dashed') ?? 'solid',
+        intent: e.intent ?? undefined,
       },
     }));
 
