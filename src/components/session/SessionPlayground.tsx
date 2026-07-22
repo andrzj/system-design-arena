@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import { Canvas } from '@/components/canvas/Canvas';
 import { SessionHeader } from '@/components/session/SessionHeader';
@@ -67,14 +67,10 @@ export function SessionPlayground({
   mermaidTab,
   judgesPanel,
 }: SessionPlaygroundProps) {
-  const [mode, setMode] = useState<WorkbenchMode>('design');
   const initSession = useCanvasStore((s) => s.initSession);
   const resetCanvas = useCanvasStore((s) => s.resetCanvas);
+  const mode = useCanvasStore((s) => s.workbenchMode);
   const setWorkbenchMode = useCanvasStore((s) => s.setWorkbenchMode);
-
-  useEffect(() => {
-    setWorkbenchMode(mode);
-  }, [mode, setWorkbenchMode]);
 
   useEffect(() => {
     const rfNodes: RFNode[] = session.nodes.map((n) => ({
@@ -137,17 +133,21 @@ export function SessionPlayground({
     <div className="flex h-[calc(100dvh-4rem)] flex-col">
       <Tabs
         value={mode}
-        onValueChange={(v) => setMode(v as WorkbenchMode)}
+        onValueChange={(v) => setWorkbenchMode(v as WorkbenchMode)}
         className="flex min-h-0 flex-1 flex-col"
       >
         <SessionHeader problemTitle={session.problem.title} modeTabs={modeTabs} />
 
-        <div className={mode === 'design' ? 'flex min-h-0 flex-1' : 'hidden'}>
+        <TabsContent
+          value="design"
+          forceMount
+          className="mt-0 min-h-0 flex-1 data-[state=inactive]:hidden data-[state=active]:flex"
+        >
           <div className="min-h-0 min-w-0 flex-1">
             <Canvas />
           </div>
           <SessionInspector />
-        </div>
+        </TabsContent>
 
         <TabsContent value="chaos" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
           {chaosTab}

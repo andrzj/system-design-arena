@@ -60,7 +60,6 @@ interface CanvasState {
   activeChaosEvents: ActiveChaosEvent[];
   simulationQueueState: SimulationQueueState;
   selectedEdgeId: string | null;
-  showLiveMetrics: boolean;
   isInteractive: boolean;
   showMinimap: boolean;
   paletteMinimized: boolean;
@@ -86,7 +85,6 @@ interface CanvasState {
   addActiveChaos: (event: ActiveChaosEvent) => void;
   clearActiveChaos: () => void;
   setSelectedEdgeId: (edgeId: string | null) => void;
-  setShowLiveMetrics: (show: boolean) => void;
   setInteractive: (interactive: boolean) => void;
   setShowMinimap: (show: boolean) => void;
   setPaletteMinimized: (minimized: boolean) => void;
@@ -146,7 +144,6 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   activeChaosEvents: [],
   simulationQueueState: createQueueState(),
   selectedEdgeId: null,
-  showLiveMetrics: false,
   isInteractive: true,
   showMinimap: true,
   paletteMinimized: false,
@@ -252,7 +249,6 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
     get().recomputeSimulation();
   },
   setSelectedEdgeId: (edgeId) => set({ selectedEdgeId: edgeId }),
-  setShowLiveMetrics: (show) => set({ showLiveMetrics: show }),
   setInteractive: (interactive) => set({ isInteractive: interactive }),
   setShowMinimap: (show) => set({ showMinimap: show }),
   setPaletteMinimized: (minimized) => set({ paletteMinimized: minimized }),
@@ -277,7 +273,6 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       edges: data.edges,
       isSimulationRunning: false,
       selectedEdgeId: null,
-      showLiveMetrics: false,
       simulationQueueState: createQueueState(),
       simulationSnapshot: idleSnapshot(data.nodes, data.edges),
       notesPanelNodeId: null,
@@ -302,7 +297,6 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       activeChaosEvents: [],
       simulationQueueState: createQueueState(),
       selectedEdgeId: null,
-      showLiveMetrics: false,
       isInteractive: true,
       showMinimap: true,
       paletteMinimized: false,
