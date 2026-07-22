@@ -81,14 +81,17 @@ export function JudgesPanel({ initialScore = null }: JudgesPanelProps) {
 
   if (!isAuthenticated) {
     return (
-      <div className="rounded-lg border border-border bg-card/40 p-6 text-sm text-muted-foreground">
-        Sign in to receive AI judge feedback on your architecture.
+      <div className="mx-auto w-full max-w-6xl wb-transition-pane">
+        <div className="rounded-lg border border-border bg-card/40 p-6 text-sm text-muted-foreground">
+          Sign in to receive AI judge feedback on your architecture.
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto w-full max-w-6xl wb-transition-pane">
+      <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="text-lg font-semibold">AI Judges</h3>
@@ -96,7 +99,12 @@ export function JudgesPanel({ initialScore = null }: JudgesPanelProps) {
             Two judges debate your design — Rigor vs Pragmatism.
           </p>
         </div>
-        <Button data-testid="score-design" onClick={scoreDesign} disabled={loading || nodes.length === 0}>
+        <Button
+          className="wb-transition wb-press"
+          data-testid="score-design"
+          onClick={scoreDesign}
+          disabled={loading || nodes.length === 0}
+        >
           {loading ? 'Scoring…' : 'Score design'}
         </Button>
       </div>
@@ -117,6 +125,7 @@ export function JudgesPanel({ initialScore = null }: JudgesPanelProps) {
           Add components to the canvas, then score to get feedback.
         </p>
       )}
+      </div>
     </div>
   );
 }

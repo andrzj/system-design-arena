@@ -20,7 +20,8 @@ export function MermaidTab() {
 
   if (!paid) {
     return (
-      <div className="mx-auto max-w-lg rounded-lg border border-border bg-card/50 p-8 text-center">
+      <div className="mx-auto w-full max-w-6xl wb-transition-pane">
+        <div className="mx-auto max-w-lg rounded-lg border border-border bg-card/50 p-8 text-center">
         <h3 className="text-lg font-semibold">Mermaid editor is premium</h3>
         <p className="mt-2 text-sm text-muted-foreground">
           Upgrade to Yearly or Stupid Button Club to edit and preview Mermaid diagrams synced from your canvas.
@@ -28,12 +29,14 @@ export function MermaidTab() {
         <Button asChild className="mt-4">
           <Link href="/upgrade">Unlock Mermaid</Link>
         </Button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-2">
+    <div className="mx-auto w-full max-w-6xl wb-transition-pane">
+      <div className="grid gap-4 lg:grid-cols-2">
       <label className="space-y-2 text-sm">
         <span className="font-medium">Mermaid source</span>
         <textarea
@@ -48,6 +51,7 @@ export function MermaidTab() {
         <pre className="min-h-[320px] overflow-auto rounded-md border border-border bg-muted/20 p-3 font-mono text-xs">
           {source}
         </pre>
+      </div>
       </div>
     </div>
   );

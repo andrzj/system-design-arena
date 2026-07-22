@@ -88,7 +88,8 @@ export function ChaosTab() {
   };
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
+    <div className="mx-auto w-full max-w-6xl wb-transition-pane">
+      <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
       <div className="space-y-4">
         {getCategories().map((category) => {
           const events = getEventsByCategory(category);
@@ -138,7 +139,7 @@ export function ChaosTab() {
           </label>
         ) : null}
         <Button
-          className="w-full"
+          className="wb-transition wb-press w-full"
           data-testid="start-chaos-simulation"
           disabled={!selectedEventId || loading || (needsTarget && targetNodeId === 'global')}
           onClick={runSimulation}
@@ -160,6 +161,7 @@ export function ChaosTab() {
           <ChaosTimeline results={results} />
         </div>
       </aside>
+      </div>
     </div>
   );
 }
