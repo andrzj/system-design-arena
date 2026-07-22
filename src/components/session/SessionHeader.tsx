@@ -11,15 +11,17 @@ import { cn } from '@/lib/utils';
 
 type SessionHeaderProps = {
   problemTitle: string;
+  modeTabs?: React.ReactNode;
 };
 
-export function SessionHeader({ problemTitle }: SessionHeaderProps) {
+export function SessionHeader({ problemTitle, modeTabs }: SessionHeaderProps) {
   const sessionUuid = useCanvasStore((s) => s.sessionUuid);
   const sessionStatus = useCanvasStore((s) => s.sessionStatus);
   const isSimulationRunning = useCanvasStore((s) => s.isSimulationRunning);
   const setSimulationState = useCanvasStore((s) => s.setSimulationState);
   const setSessionStatus = useCanvasStore((s) => s.setSessionStatus);
   const [simLoading, setSimLoading] = useState(false);
+  const [simError, setSimError] = useState<string | null>(null);
 
   const persistSettings = useCallback(async () => {
     if (!sessionUuid) return;
@@ -47,10 +49,11 @@ export function SessionHeader({ problemTitle }: SessionHeaderProps) {
       });
       if (!res.ok) {
         const data = (await res.json()) as { error?: string };
-        window.alert(data.error ?? 'Failed to toggle simulation');
+        setSimError(data.error ?? 'Failed to toggle simulation');
         return;
       }
       const data = (await res.json()) as { status: string; simRunning: boolean };
+      setSimError(null);
       setSessionStatus(data.status);
       setSimulationState(data.simRunning);
     } finally {
@@ -59,29 +62,26 @@ export function SessionHeader({ problemTitle }: SessionHeaderProps) {
   };
 
   return (
-    <header className="relative z-0 border-b border-border bg-card/60 px-4 py-3 backdrop-blur-md">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div className="space-y-1">
-          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-muted-foreground">
-            Design session
-          </p>
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="font-[family-name:var(--font-heading)] text-lg font-semibold tracking-tight">
-              {problemTitle}
-            </h1>
-            <span className="rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-primary">
-              {sessionStatus.replace('_', ' ')}
-            </span>
-          </div>
+    <header className="relative z-0 border-b border-border bg-card/60 px-3 py-2 backdrop-blur-md">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="min-w-0 flex-1">
+          <h1 className="truncate font-[family-name:var(--font-heading)] text-base font-semibold tracking-tight">
+            {problemTitle}
+          </h1>
+          <span className="mt-1 inline-block rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-primary">
+            {sessionStatus.replace('_', ' ')}
+          </span>
         </div>
 
-        <div className="flex min-w-[min(100%,520px)] flex-1 flex-wrap items-center justify-end gap-3 rounded-xl border border-white/10 bg-slate-950/50 px-3 py-2.5 lg:max-w-2xl">
+        {modeTabs}
+
+        <div className="flex flex-wrap items-center justify-end gap-2">
           <Button
             data-testid="button-toggle-sim"
             onClick={toggleSim}
             disabled={simLoading}
             className={cn(
-              'min-w-[5.5rem] gap-1.5',
+              'wb-transition wb-press min-w-[5.5rem] gap-1.5',
               isSimulationRunning
                 ? 'bg-red-600 hover:bg-red-700'
                 : 'bg-white text-slate-950 hover:bg-white/90',
@@ -108,13 +108,17 @@ export function SessionHeader({ problemTitle }: SessionHeaderProps) {
 
           <div className="hidden h-8 w-px bg-border sm:block" />
 
-          <div className="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-3">
-            <SpeedSlider onCommit={persistSettings} />
-            <TrafficSlider onCommit={persistSettings} />
-            <ReadWriteSlider onCommit={persistSettings} />
-          </div>
+          <SpeedSlider onCommit={persistSettings} />
+          <TrafficSlider onCommit={persistSettings} />
+          <ReadWriteSlider onCommit={persistSettings} />
         </div>
       </div>
+
+      {simError ? (
+        <p role="alert" className="mt-2 text-sm text-destructive">
+          {simError}
+        </p>
+      ) : null}
 
       <Button
         variant="outline"
