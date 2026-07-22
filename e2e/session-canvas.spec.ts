@@ -15,7 +15,7 @@ test.describe('Phase 4 canvas playground', () => {
     const match = page.url().match(/\/session\/([^/?#]+)/);
     createdSessionUuid = match?.[1];
 
-    await expect(page.getByRole('tab', { name: 'Canvas' })).toBeVisible();
+    await expect(page.getByRole('tab', { name: 'Design' })).toBeVisible();
     await expect(page.getByRole('tab', { name: 'Chaos' })).toBeVisible();
     await expect(page.getByTestId('button-toggle-sim')).toBeVisible();
     await expect(page.getByPlaceholder('Search components')).toBeVisible();

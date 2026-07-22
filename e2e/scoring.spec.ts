@@ -20,7 +20,7 @@ test.describe('Phase 6 AI judging', () => {
     await page.waitForURL(/\/session\//);
 
     await page.getByTestId('add-component-client').click();
-    await page.getByRole('tab', { name: 'Judges' }).click();
+    await page.getByRole('tab', { name: 'Score' }).click();
     await page.getByTestId('score-design').click();
     await expect(page.getByRole('heading', { name: 'Rigor Judge' })).toBeVisible({ timeout: 30_000 });
     await expect(page.locator('.prose')).not.toBeEmpty({ timeout: 30_000 });
