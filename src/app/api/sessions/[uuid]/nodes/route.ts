@@ -12,6 +12,7 @@ type NodeInput = {
   replicas: number;
   implementationNotes?: string | null;
   isDisabled?: boolean;
+  simConfig?: unknown;
 };
 
 export async function POST(

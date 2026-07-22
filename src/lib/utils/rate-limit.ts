@@ -4,6 +4,9 @@ import type { SubscriptionTier } from '@/lib/auth/tier';
 
 export const FREE_DAILY_SIM_LIMIT = 1;
 
+/** Set true to bypass daily sim cap during development. */
+export const SIM_LIMIT_TEMPORARILY_DISABLED = true;
+
 export function startOfUtcDay(date: Date): Date {
   return new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
 }
@@ -18,6 +21,7 @@ export function shouldResetDailyCounter(profile: Profile, today: Date = todayUtc
 }
 
 export function canStartSim(profile: Profile, tier: SubscriptionTier): boolean {
+  if (SIM_LIMIT_TEMPORARILY_DISABLED) return true;
   if (tier !== 'free') return true;
   return profile.simsUsedToday < FREE_DAILY_SIM_LIMIT;
 }

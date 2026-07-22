@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 
 import { SessionView } from '@/components/session/SessionView';
+import type { SessionData } from '@/components/session/SessionPlayground';
+import type { NodeSimConfig } from '@/lib/simulation/types';
 import { getSessionByUuidOrThrow, serializeSession } from '@/lib/sessions/helpers';
 
 export default async function SessionPage({ params }: { params: Promise<{ uuid: string }> }) {
@@ -22,10 +24,18 @@ export default async function SessionPage({ params }: { params: Promise<{ uuid: 
         speedSetting: data.speedSetting,
         trafficSetting: data.trafficSetting,
         readWriteRatio: data.readWriteRatio,
+        cacheHitRate: data.cacheHitRate,
+        edgeCacheHitRate: data.edgeCacheHitRate,
         problem: data.problem,
-        nodes: data.nodes,
+        nodes: data.nodes.map((node) => ({
+          ...node,
+          simConfig:
+            node.simConfig && typeof node.simConfig === 'object' && !Array.isArray(node.simConfig)
+              ? (node.simConfig as NodeSimConfig)
+              : undefined,
+        })),
         edges: data.edges,
-      }}
+      } satisfies SessionData}
     />
   );
 }

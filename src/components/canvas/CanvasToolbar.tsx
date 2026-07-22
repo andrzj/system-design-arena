@@ -13,6 +13,7 @@ export function CanvasToolbar({ onQuickChaos }: CanvasToolbarProps) {
   const isInteractive = useCanvasStore((s) => s.isInteractive);
   const showMinimap = useCanvasStore((s) => s.showMinimap);
   const isSimulationRunning = useCanvasStore((s) => s.isSimulationRunning);
+  const setShowLiveMetrics = useCanvasStore((s) => s.setShowLiveMetrics);
   const setInteractive = useCanvasStore((s) => s.setInteractive);
   const setShowMinimap = useCanvasStore((s) => s.setShowMinimap);
 
@@ -35,7 +36,12 @@ export function CanvasToolbar({ onQuickChaos }: CanvasToolbarProps) {
         <Map className="h-4 w-4" />
       </Button>
       {isSimulationRunning ? (
-        <Button variant="secondary" size="sm" data-testid="live-metrics">
+        <Button
+          variant="secondary"
+          size="sm"
+          data-testid="live-metrics"
+          onClick={() => setShowLiveMetrics(true)}
+        >
           Live Metrics
         </Button>
       ) : null}

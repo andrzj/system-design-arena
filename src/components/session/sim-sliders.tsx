@@ -1,6 +1,7 @@
 'use client';
 
 import { Slider } from '@/components/ui/slider';
+import { profileLabelForReadRatio } from '@/lib/simulation/problem-presets';
 import { useCanvasStore } from '@/store/canvas-store';
 
 type SpeedSliderProps = {
@@ -12,10 +13,10 @@ export function SpeedSlider({ onCommit }: SpeedSliderProps) {
   const setSpeed = useCanvasStore((s) => s.setSimulationSpeed);
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground">
         <span>Speed</span>
-        <span>Speed {speed.toFixed(1)}×</span>
+        <span className="tabular-nums text-foreground">{speed.toFixed(1)}×</span>
       </div>
       <Slider
         role="slider"
@@ -36,10 +37,10 @@ export function TrafficSlider({ onCommit }: SpeedSliderProps) {
   const setTraffic = useCanvasStore((s) => s.setTrafficLevel);
 
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground">
         <span>Traffic</span>
-        <span>{traffic.toFixed(1)}×</span>
+        <span className="tabular-nums text-foreground">{traffic.toFixed(1)}×</span>
       </div>
       <Slider
         role="slider"
@@ -58,13 +59,16 @@ export function TrafficSlider({ onCommit }: SpeedSliderProps) {
 export function ReadWriteSlider({ onCommit }: SpeedSliderProps) {
   const ratio = useCanvasStore((s) => s.readWriteRatio);
   const setRatio = useCanvasStore((s) => s.setReadWriteRatio);
+  const readPct = Math.round(ratio * 100);
   const writePct = Math.round((1 - ratio) * 100);
 
+  const profileLabel = profileLabelForReadRatio(ratio);
+
   return (
-    <div className="space-y-1">
-      <div className="flex items-center justify-between text-xs text-muted-foreground">
+    <div className="space-y-1.5">
+      <div className="flex items-center justify-between font-mono text-[10px] text-muted-foreground">
         <span>Reads vs writes</span>
-        <span>Read-heavy · {writePct}% write</span>
+        <span className="tabular-nums text-foreground">{readPct}% read</span>
       </div>
       <Slider
         role="slider"
@@ -76,6 +80,9 @@ export function ReadWriteSlider({ onCommit }: SpeedSliderProps) {
         onValueChange={([value]) => setRatio(value)}
         onValueCommit={([value]) => onCommit?.(value)}
       />
+      <p className="font-mono text-[9px] text-muted-foreground/90">
+        {profileLabel} · {writePct}% write · Hot read path
+      </p>
     </div>
   );
 }

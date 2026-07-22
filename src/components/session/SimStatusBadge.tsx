@@ -1,10 +1,15 @@
 'use client';
 
-import { FREE_DAILY_SIM_LIMIT } from '@/lib/utils/rate-limit';
+import { FREE_DAILY_SIM_LIMIT, SIM_LIMIT_TEMPORARILY_DISABLED } from '@/lib/utils/rate-limit';
 import { useAuth } from '@/store/auth-store';
 
 export function SimStatusBadge() {
   const { profile } = useAuth();
+
+  if (SIM_LIMIT_TEMPORARILY_DISABLED) {
+    return null;
+  }
+
   const used = profile?.simsUsedToday ?? 0;
   const limit = FREE_DAILY_SIM_LIMIT;
 

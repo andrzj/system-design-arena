@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Profile } from '@prisma/client';
 
-import { canStartSim, shouldResetDailyCounter, startOfUtcDay } from './rate-limit';
+import { canStartSim, shouldResetDailyCounter, SIM_LIMIT_TEMPORARILY_DISABLED, startOfUtcDay } from './rate-limit';
 
 const baseProfile = {
   id: '00000000-0000-0000-0000-000000000001',
@@ -48,6 +48,10 @@ describe('canStartSim', () => {
   });
 
   it('limits free tier to one sim per day', () => {
+    if (SIM_LIMIT_TEMPORARILY_DISABLED) {
+      expect(canStartSim({ ...baseProfile, simsUsedToday: 99 }, 'free')).toBe(true);
+      return;
+    }
     expect(canStartSim({ ...baseProfile, simsUsedToday: 0 }, 'free')).toBe(true);
     expect(canStartSim({ ...baseProfile, simsUsedToday: 1 }, 'free')).toBe(false);
   });

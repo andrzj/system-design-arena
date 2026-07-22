@@ -55,8 +55,10 @@ model DesignSession {
   status         String   @default("in_progress") // in_progress | completed
   speedSetting   Float    @default(1.0) @map("speed_setting")
   trafficSetting Float    @default(1.0) @map("traffic_setting")
-  readWriteRatio Float    @default(0.92) @map("read_write_ratio")
-  createdAt      DateTime @default(now()) @map("created_at")
+  readWriteRatio     Float    @default(0.92) @map("read_write_ratio")
+  cacheHitRate       Float    @default(0.8) @map("cache_hit_rate")
+  edgeCacheHitRate   Float    @default(0.9) @map("edge_cache_hit_rate")
+  createdAt          DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
 
   user         Profile?      @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -82,6 +84,7 @@ model CanvasNode {
   replicas            Int      @default(1)
   implementationNotes String?  @map("implementation_notes")
   isDisabled          Boolean  @default(false) @map("is_disabled")
+  simConfig           Json?    @map("sim_config")
   createdAt           DateTime @default(now()) @map("created_at")
   updatedAt           DateTime @updatedAt @map("updated_at")
 

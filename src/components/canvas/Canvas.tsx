@@ -13,22 +13,30 @@ import {
   type Connection,
   type NodeChange,
   type EdgeChange,
+  type Edge,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
 import { ComponentPalette } from '@/components/canvas/ComponentPalette';
 import { CanvasToolbar } from '@/components/canvas/CanvasToolbar';
+import { EdgeIntentPanel } from '@/components/canvas/EdgeIntentPanel';
+import { FlowEdge } from '@/components/canvas/FlowEdge';
 import { SystemNode } from '@/components/canvas/SystemNode';
+import { LiveMetricsPanel } from '@/components/session/LiveMetricsPanel';
+import { useSimulationLoop } from '@/hooks/use-simulation-loop';
 import { isValidConnection } from '@/lib/canvas/validation';
 import { useCanvasStore, type RFEdge, type RFNode } from '@/store/canvas-store';
 
 const nodeTypes = { system: SystemNode };
+const edgeTypes = { flow: FlowEdge };
 
 type CanvasProps = {
   onQuickChaos?: () => void;
 };
 
 function CanvasInner({ onQuickChaos }: CanvasProps) {
+  useSimulationLoop();
+
   const nodes = useCanvasStore((s) => s.nodes);
   const edges = useCanvasStore((s) => s.edges);
   const sessionUuid = useCanvasStore((s) => s.sessionUuid);
@@ -37,6 +45,8 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
   const setNodes = useCanvasStore((s) => s.setNodes);
   const setEdges = useCanvasStore((s) => s.setEdges);
   const removeNode = useCanvasStore((s) => s.removeNode);
+  const recomputeSimulation = useCanvasStore((s) => s.recomputeSimulation);
+  const setSelectedEdgeId = useCanvasStore((s) => s.setSelectedEdgeId);
   const loadedRef = useRef(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -44,6 +54,7 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
     () =>
       edges.map((edge) => ({
         ...edge,
+        type: 'flow',
         style: {
           strokeDasharray: edge.data?.style === 'dashed' ? '5 5' : undefined,
         },
@@ -68,6 +79,7 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
           replicas: node.data.replicas,
           implementationNotes: node.data.implementationNotes ?? null,
           isDisabled: node.data.isDisabled ?? false,
+          simConfig: node.data.simConfig ?? null,
         })),
       }),
     });
@@ -82,6 +94,7 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
           targetNodeUuid: edge.target,
           label: edge.data?.label ?? null,
           style: edge.data?.style ?? 'solid',
+          intent: edge.data?.intent ?? null,
         })),
       }),
     });
@@ -126,7 +139,7 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
         target: connection.target!,
         sourceHandle: connection.sourceHandle ?? 'source',
         targetHandle: connection.targetHandle ?? 'target',
-        type: 'smoothstep',
+        type: 'flow',
         data: { label: '', style: 'solid' },
       };
       setEdges(addEdge(edge, edges) as RFEdge[]);
@@ -134,20 +147,41 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
     [edges, setEdges],
   );
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== 'Backspace' && event.key !== 'Delete') return;
-      const selected = nodes.filter((n) => n.selected);
-      selected.forEach((node) => {
+  const deleteEdgeOnServer = useCallback(
+    (edgeId: string) => {
+      if (!sessionUuid) return;
+      void fetch(`/api/sessions/${sessionUuid}/edges/${edgeId}`, { method: 'DELETE' });
+    },
+    [sessionUuid],
+  );
+
+  const onNodesDelete = useCallback(
+    (deleted: Array<{ id: string }>) => {
+      deleted.forEach((node) => {
         removeNode(node.id);
         if (sessionUuid) {
           void fetch(`/api/sessions/${sessionUuid}/nodes/${node.id}`, { method: 'DELETE' });
         }
       });
-    };
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, [nodes, removeNode, sessionUuid]);
+      recomputeSimulation();
+    },
+    [removeNode, recomputeSimulation, sessionUuid],
+  );
+
+  const onEdgesDelete = useCallback(
+    (deleted: Edge[]) => {
+      deleted.forEach((edge) => deleteEdgeOnServer(edge.id));
+      recomputeSimulation();
+    },
+    [deleteEdgeOnServer, recomputeSimulation],
+  );
+
+  const onEdgeClick = useCallback(
+    (_event: React.MouseEvent, edge: { id: string }) => {
+      setSelectedEdgeId(edge.id);
+    },
+    [setSelectedEdgeId],
+  );
 
   return (
     <div className="flex h-full min-h-0">
@@ -157,9 +191,15 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
           nodes={nodes}
           edges={styledEdges}
           nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onEdgeClick={onEdgeClick}
+          onNodesDelete={onNodesDelete}
+          onEdgesDelete={onEdgesDelete}
+          deleteKeyCode={['Backspace', 'Delete']}
+          edgesFocusable
           isValidConnection={(connection) => isValidConnection(connection as Connection)}
           nodesConnectable={isInteractive}
           nodesDraggable={isInteractive}
@@ -169,10 +209,12 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
           multiSelectionKeyCode="Shift"
           selectionOnDrag
         >
-          <Background />
+          <Background gap={20} size={1.5} color="rgba(148, 163, 184, 0.25)" />
           <Controls />
           {showMinimap ? <MiniMap /> : null}
         </ReactFlow>
+        <EdgeIntentPanel />
+        <LiveMetricsPanel />
         <CanvasToolbar onQuickChaos={onQuickChaos} />
       </div>
     </div>

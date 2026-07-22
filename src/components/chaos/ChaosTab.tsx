@@ -21,6 +21,9 @@ export function ChaosTab() {
   const sessionUuid = useCanvasStore((s) => s.sessionUuid);
   const nodes = useCanvasStore((s) => s.nodes);
   const updateNode = useCanvasStore((s) => s.updateNode);
+  const addActiveChaos = useCanvasStore((s) => s.addActiveChaos);
+  const activeChaosEvents = useCanvasStore((s) => s.activeChaosEvents);
+  const clearActiveChaos = useCanvasStore((s) => s.clearActiveChaos);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [targetNodeId, setTargetNodeId] = useState<string>('global');
   const [results, setResults] = useState<ChaosSimulationResult[]>([]);
@@ -60,9 +63,24 @@ export function ChaosTab() {
           isDegraded: update.isDegraded,
         });
       }
+      addActiveChaos({
+        chaosId: selectedEventId,
+        nodeId: targetNodeId === 'global' ? null : targetNodeId,
+        scope: selectedEvent?.scope ?? 'node',
+      });
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetChaos = () => {
+    const affectedNodeIds = new Set(
+      results.flatMap((result) => result.nodeUpdates.map((update) => update.nodeId)),
+    );
+    for (const nodeId of affectedNodeIds) {
+      updateNode(nodeId, { isDisabled: false, isDegraded: false });
+    }
+    clearActiveChaos();
   };
 
   return (
@@ -116,6 +134,16 @@ export function ChaosTab() {
         >
           Start Simulation
         </Button>
+        {activeChaosEvents.length > 0 ? (
+          <Button
+            className="w-full"
+            variant="outline"
+            data-testid="reset-chaos"
+            onClick={resetChaos}
+          >
+            Reset Chaos ({activeChaosEvents.length} active)
+          </Button>
+        ) : null}
         <div>
           <h4 className="mb-2 text-sm font-medium">Timeline</h4>
           <ChaosTimeline results={results} />

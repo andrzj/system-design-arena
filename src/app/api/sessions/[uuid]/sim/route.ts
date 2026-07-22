@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { getUserTier } from '@/lib/auth/tier';
 import { getSessionByUuidOrThrow } from '@/lib/sessions/helpers';
 import { updateSession } from '@/lib/db';
-import { canStartSim } from '@/lib/utils/rate-limit';
+import { canStartSim, SIM_LIMIT_TEMPORARILY_DISABLED } from '@/lib/utils/rate-limit';
 import { getProfileWithDailyReset, incrementSimCount } from '@/lib/utils/rate-limit-server';
 import { createClient } from '@/lib/supabase/server';
 
@@ -31,10 +31,12 @@ export async function PUT(
         return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
       }
       const tier = getUserTier(profile);
-      if (!canStartSim(profile, tier)) {
+      if (!SIM_LIMIT_TEMPORARILY_DISABLED && !canStartSim(profile, tier)) {
         return NextResponse.json({ error: 'Daily sim limit reached' }, { status: 429 });
       }
-      await incrementSimCount(user.id);
+      if (!SIM_LIMIT_TEMPORARILY_DISABLED) {
+        await incrementSimCount(user.id);
+      }
     }
 
     const updated = await updateSession(session.id, { status: 'in_progress' });

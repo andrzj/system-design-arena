@@ -14,6 +14,8 @@ export type SessionData = {
   speedSetting: number;
   trafficSetting: number;
   readWriteRatio: number;
+  cacheHitRate?: number;
+  edgeCacheHitRate?: number;
   problem: {
     id: number;
     title: string;
@@ -28,6 +30,12 @@ export type SessionData = {
     replicas: number;
     implementationNotes: string | null;
     isDisabled: boolean;
+    simConfig?: {
+      cacheHitRate?: number;
+      shardCount?: number;
+      keySkewPct?: number;
+      partitionStrategy?: 'hash' | 'range' | 'round_robin' | 'geo';
+    } | null;
   }>;
   edges: Array<{
     edgeUuid: string;
@@ -67,6 +75,7 @@ export function SessionPlayground({
         replicas: n.replicas,
         implementationNotes: n.implementationNotes,
         isDisabled: n.isDisabled,
+        simConfig: n.simConfig ?? undefined,
       },
     }));
 
@@ -76,7 +85,7 @@ export function SessionPlayground({
       target: e.targetNodeUuid,
       sourceHandle: 'source',
       targetHandle: 'target',
-      type: 'smoothstep',
+      type: 'flow',
       data: {
         label: e.label ?? '',
         style: (e.style as 'solid' | 'dashed') ?? 'solid',
@@ -92,6 +101,8 @@ export function SessionPlayground({
       speedSetting: session.speedSetting,
       trafficSetting: session.trafficSetting,
       readWriteRatio: session.readWriteRatio,
+      cacheHitRate: session.cacheHitRate,
+      edgeCacheHitRate: session.edgeCacheHitRate,
       nodes: rfNodes,
       edges: rfEdges,
     });

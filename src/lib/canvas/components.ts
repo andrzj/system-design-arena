@@ -488,4 +488,20 @@ export const getCategories = () => {
   return [...new Set(COMPONENT_DEFS.map(component => component.category))];
 };
 
+const NOTES_HINTS: Record<string, string> = {
+  client: 'Entry point for user traffic. Usually read-heavy.',
+  cache: 'Front hot reads. Tune hit rate and eviction.',
+  cdn: 'Edge cache for static assets. Pair with origin on miss.',
+  sql_db: 'System of record. Shard/partition for scale.',
+  nosql_db: 'Flexible schema store. Watch hot keys and skew.',
+  api_gateway: 'Auth, routing, rate limits at the edge.',
+  app_server: 'Business logic layer between gateway and data.',
+  message_queue: 'Buffer writes/async work off request path.',
+  load_balancer: 'Spread traffic across replicas.',
+};
+
+export function getComponentNotesHint(componentType: string, label?: string): string | undefined {
+  return NOTES_HINTS[componentType] ?? NOTES_HINTS[label?.toLowerCase().replace(/\s+/g, '_') ?? ''];
+}
+
 export default COMPONENT_DEFS;

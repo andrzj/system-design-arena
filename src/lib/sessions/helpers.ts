@@ -39,6 +39,8 @@ export function serializeSession(session: NonNullable<Awaited<ReturnType<typeof 
     speedSetting: session.speedSetting,
     trafficSetting: session.trafficSetting,
     readWriteRatio: session.readWriteRatio,
+    cacheHitRate: session.cacheHitRate,
+    edgeCacheHitRate: session.edgeCacheHitRate,
     problem: {
       id: session.problem.id,
       title: session.problem.title,
@@ -57,6 +59,7 @@ export function serializeSession(session: NonNullable<Awaited<ReturnType<typeof 
       replicas: node.replicas,
       implementationNotes: node.implementationNotes,
       isDisabled: node.isDisabled,
+      simConfig: node.simConfig,
     })),
     edges: session.edges.map((edge) => ({
       edgeUuid: edge.edgeUuid,

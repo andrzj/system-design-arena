@@ -177,13 +177,18 @@ export async function upsertCanvasNodes(
     replicas: number;
     implementationNotes?: string | null;
     isDisabled?: boolean;
+    simConfig?: unknown;
   }>,
 ) {
   const results = await Promise.all(
     nodes.map((node) =>
       prisma.canvasNode.upsert({
         where: { nodeUuid: node.nodeUuid },
-        create: { ...node, sessionId },
+        create: {
+          ...node,
+          sessionId,
+          simConfig: node.simConfig ?? undefined,
+        },
         update: {
           componentType: node.componentType,
           label: node.label,
@@ -192,6 +197,7 @@ export async function upsertCanvasNodes(
           replicas: node.replicas,
           implementationNotes: node.implementationNotes,
           isDisabled: node.isDisabled ?? false,
+          simConfig: node.simConfig ?? undefined,
         },
       }),
     ),
@@ -246,7 +252,24 @@ export async function upsertCanvasEdges(
     }),
   );
 
+  const keepIds = edges.map((edge) => edge.edgeUuid);
+  await prisma.canvasEdge.deleteMany({
+    where: {
+      sessionId,
+      edgeUuid: { notIn: keepIds.length > 0 ? keepIds : ['__none__'] },
+    },
+  });
+
   return results;
+}
+
+export async function deleteEdgeByUuid(sessionId: number, edgeUuid: string) {
+  const edge = await prisma.canvasEdge.findFirst({
+    where: { sessionId, edgeUuid },
+  });
+  if (!edge) return null;
+  await prisma.canvasEdge.delete({ where: { id: edge.id } });
+  return edge;
 }
 
 export async function deleteNodeByUuid(sessionId: number, nodeUuid: string) {

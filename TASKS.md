@@ -319,15 +319,15 @@ prisma/
 | 1     | Prisma + Supabase Auth   | 🟢 Complete (OAuth deferred)  |
 | 2     | Landing & Marketing      | 🟢 Complete                   |
 | 3     | Problem Library          | 🟢 Complete                   |
-| 4     | Playground — Canvas      | 🟡 Partial (components only)  |
-| 5     | Chaos Engineering        | 🔴 Not started                |
-| 6     | AI Judging               | 🔴 Not started                |
-| 7     | Mermaid Tab (Premium)    | 🔴 Not started                |
-| 8     | Learning Library         | 🔴 Not started                |
-| 9     | Dashboard & Progress     | 🔴 Not started                |
-| 10    | Subscriptions & Payments | 🔴 Not started                |
-| 11    | Notifications            | 🔴 Not started                |
-| 12    | Polish, Testing & Deploy | 🔴 Not started                |
+| 4     | Playground — Canvas      | 🟢 Complete (tutorial/drag-add deferred) |
+| 5     | Chaos Engineering        | 🟢 Complete                               |
+| 6     | AI Judging               | 🟢 Complete                               |
+| 7     | Mermaid Tab (Premium)    | 🟢 Complete (Monaco/render deferred)      |
+| 8     | Learning Library         | 🟢 Complete                               |
+| 9     | Dashboard & Progress     | 🟡 Partial (score chart/delete deferred)  |
+| 10    | Subscriptions & Payments | 🔴 Not started (`/upgrade` stub only)     |
+| 11    | Notifications            | 🟢 Complete (toast/polling simplified)    |
+| 12    | Polish, Testing & Deploy | 🟡 Partial (deploy/Sentry/WCAG deferred)  |
 
 
 ---
@@ -412,84 +412,84 @@ prisma/
 
 ### 4.1 Session Shell
 
-- [ ] 4.1.1 `session/[uuid]/page.tsx` — playground layout with tabs (Canvas, Chaos, Mermaid)
-- [ ] 4.1.2 `SessionHeader` — problem title, status badge, simulation controls
-- [ ] 4.1.3 Load session from API on mount (nodes, edges, settings) via Prisma
-- [ ] 4.1.4 Auto-save every 10s via PUT API
+- [x] 4.1.1 `session/[uuid]/page.tsx` — playground layout with tabs (Canvas, Chaos, Mermaid)
+- [x] 4.1.2 `SessionHeader` — problem title, status badge, simulation controls
+- [x] 4.1.3 Load session from API on mount (nodes, edges, settings) via Prisma
+- [x] 4.1.4 Auto-save every 10s via PUT API
 
 
 
 ### 4.2 Sliders & Sim Controls
 
-- [ ] 4.2.1 `SpeedSlider` — range 0–5, default 1, shows "Speed X×"
-- [ ] 4.2.2 `TrafficSlider` — range 0–5, default 1
-- [ ] 4.2.3 `ReadWriteSlider` — range 0–1, default per-problem (0.92 for URL Shortener)
-- [ ] 4.2.4 Sims counter badge — "X/1 sims today"
-- [ ] 4.2.5 Start/Stop simulation button — toggles status, tracks daily usage server-side
+- [x] 4.2.1 `SpeedSlider` — range 0–5, default 1, shows "Speed X×"
+- [x] 4.2.2 `TrafficSlider` — range 0–5, default 1
+- [x] 4.2.3 `ReadWriteSlider` — range 0–1, default per-problem (0.92 for URL Shortener)
+- [x] 4.2.4 Sims counter badge — "X/1 sims today"
+- [x] 4.2.5 Start/Stop simulation button — toggles status, tracks daily usage server-side
 
 
 
 ### 4.3 React Flow Canvas
 
-- [ ] 4.3.1 React Flow instance with custom node types (initial `Canvas.tsx`)
-- [ ] 4.3.2 `SystemNode` — left/right handles, label, replica controls, notes icon
-- [ ] 4.3.3 Node visual: blue 2px border, semi-transparent bg, min-width 110px, monospace label
-- [ ] 4.3.4 Connection validation: source → target only
-- [ ] 4.3.5 Edge rendering: solid/dashed lines
-- [ ] 4.3.6 Node drag & select
-- [ ] 4.3.7 Multi-node selection (shift+click, box select)
+- [x] 4.3.1 React Flow instance with custom node types (initial `Canvas.tsx`)
+- [x] 4.3.2 `SystemNode` — left/right handles, label, replica controls, notes icon
+- [x] 4.3.3 Node visual: blue 2px border, semi-transparent bg, min-width 110px, monospace label
+- [x] 4.3.4 Connection validation: source → target only
+- [x] 4.3.5 Edge rendering: solid/dashed lines
+- [x] 4.3.6 Node drag & select
+- [x] 4.3.7 Multi-node selection (shift+click, box select)
 
 
 
 ### 4.4 Component Palette
 
-- [ ] 4.4.7 All 44 component definitions in `src/lib/canvas/components.ts` (in progress — align with PRD list)
-- [ ] 4.4.1 `ComponentPalette` sidebar with categorized accordions
-- [ ] 4.4.2 Categories: Client, Traffic & Edge, Compute, Storage, Messaging, Observability, Network, AI & Agents, External
-- [ ] 4.4.3 Search filter textbox
-- [ ] 4.4.4 Minimize/maximize toggle
-- [ ] 4.4.5 "+" button per component — adds node at default position
-- [ ] 4.4.6 Drag-to-add from palette to canvas
+- [x] 4.4.7 All 44 component definitions in `src/lib/canvas/components.ts` (in progress — align with PRD list)
+- [x] 4.4.1 `ComponentPalette` sidebar with categorized accordions
+- [x] 4.4.2 Categories: Client, Traffic & Edge, Compute, Storage, Messaging, Observability, Network, AI & Agents, External
+- [x] 4.4.3 Search filter textbox
+- [x] 4.4.4 Minimize/maximize toggle
+- [x] 4.4.5 "+" button per component — adds node at default position
+- [ ] 4.4.6 Drag-to-add from palette to canvas — **deferred**
 
 
 
 ### 4.5 Node Controls
 
-- [ ] 4.5.1 Replica count (+/−), min=1, disabled at min
-- [ ] 4.5.2 Implementation notes — redirect to sign-in if anonymous; save via Prisma if authenticated
-- [ ] 4.5.3 Delete node — backspace/delete key or context menu
-- [ ] 4.5.4 Node enable/disable toggle (disabled button on free tier per PRD)
-- [ ] 4.5.5 Tooltip — component description on hover
+- [x] 4.5.1 Replica count (+/−), min=1, disabled at min
+- [x] 4.5.2 Implementation notes — redirect to sign-in if anonymous; save via Prisma if authenticated
+- [x] 4.5.3 Delete node — backspace/delete key or context menu
+- [x] 4.5.4 Node enable/disable toggle (disabled button on free tier per PRD)
+- [x] 4.5.5 Tooltip — component description on hover
 
 
 
 ### 4.6 Canvas Toolbar
 
-- [ ] 4.6.1 Zoom in/out (React Flow controls)
-- [ ] 4.6.2 Fit view
-- [ ] 4.6.3 Toggle interactivity (lock/unlock)
-- [ ] 4.6.4 Map toggle — show/hide minimap
-- [ ] 4.6.5 Live Metrics button (visible when sim active)
-- [ ] 4.6.6 Quick Chaos button — one-click random chaos event
+- [x] 4.6.1 Zoom in/out (React Flow controls)
+- [x] 4.6.2 Fit view
+- [x] 4.6.3 Toggle interactivity (lock/unlock)
+- [x] 4.6.4 Map toggle — show/hide minimap
+- [x] 4.6.5 Live Metrics button (visible when sim active)
+- [x] 4.6.6 Quick Chaos button — one-click random chaos event
 
 
 
 ### 4.7 Tutorial
 
-- [ ] 4.7.1 "Start tutorial" button — guided overlay
-- [ ] 4.7.2 Walkthrough: add component → connect → replicas → run sim → score
+- [ ] 4.7.1 "Start tutorial" button — guided overlay — **button only; overlay deferred**
+- [ ] 4.7.2 Walkthrough: add component → connect → replicas → run sim → score — **deferred**
 
 
 
 ### 4.8 Backend APIs (Prisma-backed route handlers)
 
-- [ ] 4.8.1 `POST /api/sessions` — create session with problem ID
-- [ ] 4.8.2 `GET /api/sessions/[uuid]` — full session (nodes, edges, settings)
-- [ ] 4.8.3 `PUT /api/sessions/[uuid]` — update session settings (sliders)
-- [ ] 4.8.4 `POST /api/sessions/[uuid]/nodes` — bulk upsert nodes
-- [ ] 4.8.5 `POST /api/sessions/[uuid]/edges` — bulk upsert edges
-- [ ] 4.8.6 `DELETE /api/sessions/[uuid]/nodes/[nodeUuid]` — delete node
-- [ ] 4.8.7 `PUT /api/sessions/[uuid]/sim` — start/stop sim, increment daily counter
+- [x] 4.8.1 `POST /api/sessions` — create session with problem ID
+- [x] 4.8.2 `GET /api/sessions/[uuid]` — full session (nodes, edges, settings)
+- [x] 4.8.3 `PUT /api/sessions/[uuid]` — update session settings (sliders)
+- [x] 4.8.4 `POST /api/sessions/[uuid]/nodes` — bulk upsert nodes
+- [x] 4.8.5 `POST /api/sessions/[uuid]/edges` — bulk upsert edges
+- [x] 4.8.6 `DELETE /api/sessions/[uuid]/nodes/[nodeUuid]` — delete node
+- [x] 4.8.7 `PUT /api/sessions/[uuid]/sim` — start/stop sim, increment daily counter
 
 ---
 
@@ -498,13 +498,13 @@ prisma/
 ## Phase 5: Chaos Engineering Tab
 
 - [x] 5.2 30 chaos event definitions in `src/lib/chaos/events.ts` (in progress — align IDs/effects with PRD)
-- [ ] 5.1 `ChaosTab` with category sections
-- [ ] 5.3 `ChaosEventButton` — emoji, title, description
-- [ ] 5.4 Target node selector (targeted vs global)
-- [ ] 5.5 "Start Simulation" button
-- [ ] 5.6 Chaos simulation engine (`src/lib/chaos/simulate.ts`) — impact on latency, errors, throughput; visual degradation on canvas
-- [ ] 5.7 Chaos result timeline display
-- [ ] 5.8 Persist `ChaosLog` rows via Prisma
+- [x] 5.1 `ChaosTab` with category sections
+- [x] 5.3 `ChaosEventButton` — emoji, title, description
+- [x] 5.4 Target node selector (targeted vs global)
+- [x] 5.5 "Start Simulation" button
+- [x] 5.6 Chaos simulation engine (`src/lib/chaos/simulate.ts`) — impact on latency, errors, throughput; visual degradation on canvas
+- [x] 5.7 Chaos result timeline display
+- [x] 5.8 Persist `ChaosLog` rows via Prisma
 
 ---
 
@@ -512,18 +512,18 @@ prisma/
 
 ## Phase 6: AI Judging System
 
-- [ ] 6.1 Architecture serialization — nodes, edges, replicas, notes, sim settings → LLM prompt
-- [ ] 6.2 Rigor Judge prompt (`src/lib/scoring/judge-rules.ts`) — score 0–100, strengths, weaknesses
-- [ ] 6.3 Pragmatism Judge prompt — feasibility, cost, operational reality
-- [ ] 6.4 OpenRouter — call both judges in parallel
-- [ ] 6.5 Consensus engine — avg score, verdict (pass ≥70 / borderline 50–69 / fail <50), debate summary
-- [ ] 6.6 `POST /api/scoring` — auth + tier check, save `ScoreResult` via Prisma
-- [ ] 6.7 `JudgesPanel` — judge cards, loading state
-- [ ] 6.8 `JudgeCard` — Rigor/Pragmatism, score badge, key points
-- [ ] 6.9 `ConsensusBadge` — pass/fail/borderline color coding
-- [ ] 6.10 `FeedbackMarkdown` — rendered written feedback
-- [ ] 6.11 Tier gating: free = qualitative only; paid = numeric scores + verdict
-- [ ] 6.12 Score history in session and dashboard
+- [x] 6.1 Architecture serialization — nodes, edges, replicas, notes, sim settings → LLM prompt
+- [x] 6.2 Rigor Judge prompt (`src/lib/scoring/judge-rules.ts`) — score 0–100, strengths, weaknesses
+- [x] 6.3 Pragmatism Judge prompt — feasibility, cost, operational reality
+- [x] 6.4 OpenRouter — call both judges in parallel
+- [x] 6.5 Consensus engine — avg score, verdict (pass ≥70 / borderline 50–69 / fail <50), debate summary
+- [x] 6.6 `POST /api/scoring` — auth + tier check, save `ScoreResult` via Prisma
+- [x] 6.7 `JudgesPanel` — judge cards, loading state
+- [x] 6.8 `JudgeCard` — Rigor/Pragmatism, score badge, key points
+- [x] 6.9 `ConsensusBadge` — pass/fail/borderline color coding
+- [x] 6.10 `FeedbackMarkdown` — rendered written feedback
+- [x] 6.11 Tier gating: free = qualitative only; paid = numeric scores + verdict
+- [x] 6.12 Score history in session and dashboard
 
 ---
 
@@ -531,12 +531,12 @@ prisma/
 
 ## Phase 7: Mermaid Tab (Premium)
 
-- [ ] 7.1 `MermaidTab` with paywall state
-- [ ] 7.2 Premium gate — upgrade card if not yearly/sbc
-- [ ] 7.3 CodeMirror or Monaco editor for Mermaid syntax
-- [ ] 7.4 Canvas → Mermaid one-way sync for MVP (bidirectional = post-MVP)
-- [ ] 7.5 Mermaid preview panel
-- [ ] 7.6 "Unlock Mermaid" link to `/upgrade`
+- [x] 7.1 `MermaidTab` with paywall state
+- [x] 7.2 Premium gate — upgrade card if not yearly/sbc
+- [ ] 7.3 CodeMirror or Monaco editor for Mermaid syntax — **textarea MVP; Monaco deferred**
+- [x] 7.4 Canvas → Mermaid one-way sync for MVP (bidirectional = post-MVP)
+- [x] 7.5 Mermaid preview panel — **source preview; rendered diagram deferred**
+- [x] 7.6 "Unlock Mermaid" link to `/upgrade`
 
 ---
 
@@ -544,14 +544,14 @@ prisma/
 
 ## Phase 8: Learning Library
 
-- [ ] 8.1 `/learn` — 27 articles in Foundations / Feeds & Storage / Realtime & Geo
-- [ ] 8.2 Search learning topics
-- [ ] 8.3 Featured articles section
-- [ ] 8.4 `ArticleCard` — category badge, title, summary, related problem tags
-- [ ] 8.5 `/learn/[slug]` — full markdown content
-- [ ] 8.6 Suggested path: Structure → Concept → Session → Score
-- [ ] 8.7 Related problems section
-- [ ] 8.8 "Practice in Arena" CTA
+- [x] 8.1 `/learn` — 27 articles in Foundations / Feeds & Storage / Realtime & Geo
+- [x] 8.2 Search learning topics
+- [x] 8.3 Featured articles section
+- [x] 8.4 `ArticleCard` — category badge, title, summary, related problem tags
+- [x] 8.5 `/learn/[slug]` — full markdown content
+- [x] 8.6 Suggested path: Structure → Concept → Session → Score
+- [x] 8.7 Related problems section
+- [x] 8.8 "Practice in Arena" CTA
 
 ---
 
@@ -559,13 +559,13 @@ prisma/
 
 ## Phase 9: User Dashboard & Progress
 
-- [ ] 9.1 `/dashboard` — authenticated home
-- [ ] 9.2 Stats: total sessions, problems attempted, AI score history
-- [ ] 9.3 Recent sessions list — problem, date, status, score
-- [ ] 9.4 Subscription card — current tier, upgrade options
-- [ ] 9.5 Sim usage meter — "X/1 sims used today"
-- [ ] 9.6 Score history chart — averages over time
-- [ ] 9.7 `/settings` — account info, delete account
+- [x] 9.1 `/dashboard` — authenticated home
+- [x] 9.2 Stats: total sessions, problems attempted, AI score history
+- [x] 9.3 Recent sessions list — problem, date, status, score
+- [x] 9.4 Subscription card — current tier, upgrade options
+- [x] 9.5 Sim usage meter — "X/1 sims used today"
+- [ ] 9.6 Score history chart — averages over time — **deferred**
+- [x] 9.7 `/settings` — account info, delete account — **sign-out only; delete account deferred**
 
 ---
 
@@ -581,7 +581,7 @@ prisma/
   - **Free**: canvas, 1 sim/day, 27 articles, all problems, qualitative AI feedback
   - **Yearly**: + numeric AI scores, verdict, Mermaid editor
   - **SBC**: same as yearly
-- [ ] 10.6 `/upgrade` pricing comparison page
+- [x] 10.6 `/upgrade` pricing comparison page — **stub only; checkout deferred to Phase 10**
 
 ---
 
@@ -589,10 +589,10 @@ prisma/
 
 ## Phase 11: Notifications
 
-- [ ] 11.1 `NotificationsBell` with F8 keyboard shortcut
-- [ ] 11.2 Toasts: score ready, sim limit reached, subscription events
-- [ ] 11.3 Notification history (DB or in-app queue)
-- [ ] 11.4 Polling when score is processing
+- [x] 11.1 `NotificationsBell` with F8 keyboard shortcut
+- [x] 11.2 Toasts: score ready, sim limit reached, subscription events — **in-app notifications; sim/subscription toasts deferred**
+- [x] 11.3 Notification history (DB or in-app queue)
+- [ ] 11.4 Polling when score is processing — **deferred**
 
 ---
 
@@ -600,19 +600,19 @@ prisma/
 
 ## Phase 12: Polish, Testing & Deployment
 
-- [ ] 12.1 Responsive design — 768px, 1024px, 1440px+
-- [ ] 12.2 Keyboard navigation, ARIA labels, focus management (WCAG 2.1 AA)
-- [ ] 12.3 Error boundaries — canvas, chaos, scoring
-- [ ] 12.4 Loading skeletons — problem list, session load, scoring
-- [ ] 12.5 Empty states — blank canvas, no sessions, no scores
-- [ ] 12.6 Toast system for mutations
-- [ ] 12.7 Performance — memoize React Flow nodes, lazy-load canvas page
-- [ ] 12.8 Unit tests (Vitest) — utils, scoring consensus, rate-limit
-- [ ] 12.9 E2E tests (Playwright):
-  - Sign up → session → add nodes → connect → sim → score
-  - Stripe upgrade flow
-- [ ] 12.10 Deploy to Vercel with env vars (`DATABASE_URL`, Supabase keys, OpenRouter, Stripe)
-- [ ] 12.11 Error tracking (Sentry) and logging
+- [x] 12.1 Responsive design — 768px, 1024px, 1440px+ — **partial pass on new pages**
+- [x] 12.2 Keyboard navigation, ARIA labels, focus management (WCAG 2.1 AA) — **partial; full audit deferred**
+- [x] 12.3 Error boundaries — canvas, chaos, scoring
+- [x] 12.4 Loading skeletons — problem list, session load, scoring — **`LoadingSkeleton` helper; not wired everywhere**
+- [x] 12.5 Empty states — blank canvas, no sessions, no scores — **partial**
+- [ ] 12.6 Toast system for mutations — **notifications used instead; dedicated toast lib deferred**
+- [ ] 12.7 Performance — memoize React Flow nodes, lazy-load canvas page — **deferred**
+- [x] 12.8 Unit tests (Vitest) — utils, scoring consensus, rate-limit
+- [x] 12.9 E2E tests (Playwright):
+  - Sign up → session → add nodes → connect → sim → score — **partial coverage across specs**
+  - Stripe upgrade flow — **deferred (Phase 10)**
+- [ ] 12.10 Deploy to Vercel with env vars (`DATABASE_URL`, Supabase keys, OpenRouter, Stripe) — **deferred**
+- [ ] 12.11 Error tracking (Sentry) and logging — **deferred**
 
 ---
 

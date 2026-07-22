@@ -32,6 +32,8 @@ export async function PUT(
     speedSetting?: number;
     trafficSetting?: number;
     readWriteRatio?: number;
+    cacheHitRate?: number;
+    edgeCacheHitRate?: number;
     status?: string;
   };
 
@@ -39,6 +41,8 @@ export async function PUT(
     speedSetting: body.speedSetting,
     trafficSetting: body.trafficSetting,
     readWriteRatio: body.readWriteRatio,
+    cacheHitRate: body.cacheHitRate,
+    edgeCacheHitRate: body.edgeCacheHitRate,
     status: body.status,
   });
 
@@ -46,6 +50,8 @@ export async function PUT(
     speedSetting: updated.speedSetting,
     trafficSetting: updated.trafficSetting,
     readWriteRatio: updated.readWriteRatio,
+    cacheHitRate: updated.cacheHitRate,
+    edgeCacheHitRate: updated.edgeCacheHitRate,
     status: updated.status,
   });
 }
