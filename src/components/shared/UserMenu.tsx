@@ -48,7 +48,7 @@ export function UserMenu() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative z-[60]">
       <Button
         type="button"
         variant="outline"
@@ -68,13 +68,13 @@ export function UserMenu() {
         <>
           <button
             type="button"
-            className="fixed inset-0 z-40 cursor-default"
+            className="fixed inset-0 z-[55] cursor-default"
             aria-label="Close menu"
             onClick={() => setOpen(false)}
           />
           <div
             role="menu"
-            className="absolute right-0 z-50 mt-2 w-56 rounded-md border border-border bg-card p-1 shadow-lg"
+            className="absolute right-0 z-[70] mt-2 w-56 rounded-md border border-border bg-card p-1 shadow-lg"
           >
             <div className="border-b border-border px-3 py-2">
               <p className="truncate text-sm font-medium">{displayName}</p>
@@ -85,6 +85,14 @@ export function UserMenu() {
                 </p>
               ) : null}
             </div>
+            <Link
+              href="/dashboard"
+              role="menuitem"
+              className="block rounded-sm px-3 py-2 text-sm hover:bg-muted"
+              onClick={() => setOpen(false)}
+            >
+              Dashboard
+            </Link>
             <Link
               href="/settings"
               role="menuitem"

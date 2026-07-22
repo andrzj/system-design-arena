@@ -1,4 +1,10 @@
-import { getEventById } from '@/lib/chaos/events';
+import { shouldApplyChaosGlobally } from '@/lib/chaos/scopes';
+
+import {
+  chaosEventToModifier,
+  DEFAULT_CHAOS_MODIFIER,
+  type EngineChaosModifier,
+} from '@/lib/chaos/event-modifiers';
 
 export type ActiveChaosEvent = {
   chaosId: string;
@@ -6,25 +12,8 @@ export type ActiveChaosEvent = {
   scope: string;
 };
 
-export type EngineChaosModifier = {
-  capacityMultiplier: number;
-  slownessMultiplier: number;
-  errorBoost: number;
-  connectionDropBoost: number;
-  crash: boolean;
-  cacheHitPenalty: number;
-  trafficMultiplier: number;
-};
-
-const DEFAULT: EngineChaosModifier = {
-  capacityMultiplier: 1,
-  slownessMultiplier: 1,
-  errorBoost: 0,
-  connectionDropBoost: 0,
-  crash: false,
-  cacheHitPenalty: 0,
-  trafficMultiplier: 1,
-};
+export type { EngineChaosModifier };
+export { chaosEventToModifier, DEFAULT_CHAOS_MODIFIER };
 
 function clamp(value: number, min: number, max: number): number {
   return Math.min(max, Math.max(min, value));
@@ -45,57 +34,19 @@ function mergeModifiers(
   };
 }
 
-export function chaosEventToModifier(eventId: string): EngineChaosModifier {
-  const event = getEventById(eventId);
-  if (!event) return DEFAULT;
-
-  const effects = event.effects as {
-    is_disabled?: boolean;
-    latency_multiplier?: number | null;
-    error_rate?: number;
-    throughput_multiplier?: number;
-  };
-
-  const throughput = effects.throughput_multiplier ?? 1;
-  const errorRate = effects.error_rate ?? 0;
-  const latency = effects.latency_multiplier ?? 1;
-  const cacheHitPenalty =
-    event.id.includes('cache') && !event.id.includes('thundering') ? 0.35 : event.id === 'cache_thundering_herd' ? 0.55 : 0;
-
-  if (effects.is_disabled) {
-    return {
-      ...DEFAULT,
-      crash: true,
-      capacityMultiplier: 0,
-      errorBoost: 0.6,
-      connectionDropBoost: 1,
-    };
-  }
-
-  return {
-    capacityMultiplier: clamp(throughput, 0.1, 1),
-    slownessMultiplier: clamp(latency, 1, 3.2),
-    errorBoost: clamp(errorRate * 0.6, 0, 0.6),
-    connectionDropBoost: clamp(errorRate * 0.4, 0, 0.85),
-    crash: false,
-    cacheHitPenalty,
-    trafficMultiplier: event.scope === 'global' || event.scope === 'zone' ? clamp(throughput, 0.5, 2) : 1,
-  };
-}
-
 export function isGlobalChaosScope(scope: string): boolean {
-  return scope === 'global' || scope === 'zone' || scope === 'system';
+  return shouldApplyChaosGlobally(scope, null);
 }
 
 export function buildChaosContext(activeChaos: ActiveChaosEvent[] = []) {
-  let globalModifier = { ...DEFAULT };
+  let globalModifier = { ...DEFAULT_CHAOS_MODIFIER };
   let trafficMultiplier = 1;
   const nodeModifiers = new Map<string, EngineChaosModifier>();
   let hasGlobalChaos = false;
 
   for (const active of activeChaos) {
     const modifier = chaosEventToModifier(active.chaosId);
-    const global = isGlobalChaosScope(active.scope) || active.nodeId === null;
+    const global = shouldApplyChaosGlobally(active.scope, active.nodeId);
 
     if (global) {
       globalModifier = mergeModifiers(globalModifier, modifier);
@@ -107,12 +58,13 @@ export function buildChaosContext(activeChaos: ActiveChaosEvent[] = []) {
         modifier.slownessMultiplier !== 1 ||
         modifier.errorBoost > 0 ||
         modifier.connectionDropBoost > 0 ||
-        modifier.cacheHitPenalty > 0;
+        modifier.cacheHitPenalty > 0 ||
+        modifier.trafficMultiplier !== 1;
       continue;
     }
 
     if (!active.nodeId) continue;
-    const existing = nodeModifiers.get(active.nodeId) ?? { ...DEFAULT };
+    const existing = nodeModifiers.get(active.nodeId) ?? { ...DEFAULT_CHAOS_MODIFIER };
     nodeModifiers.set(active.nodeId, mergeModifiers(existing, modifier));
   }
 
@@ -128,7 +80,7 @@ export function resolveNodeChaosModifier(
   base: EngineChaosModifier,
 ): EngineChaosModifier {
   const scoped = nodeModifiers.get(nodeId);
-  let merged = mergeModifiers(base, scoped ?? DEFAULT);
+  let merged = mergeModifiers(base, scoped ?? DEFAULT_CHAOS_MODIFIER);
 
   if (hasGlobalChaos && nodeArchetype !== 'client') {
     merged = mergeModifiers(merged, globalModifier);

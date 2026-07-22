@@ -5,6 +5,7 @@ import { useEffect } from 'react';
 import { Canvas } from '@/components/canvas/Canvas';
 import { SessionHeader } from '@/components/session/SessionHeader';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { JudgeScoreResult } from '@/lib/scoring/score-result';
 import { useCanvasStore, type RFEdge, type RFNode } from '@/store/canvas-store';
 
 export type SessionData = {
@@ -16,6 +17,7 @@ export type SessionData = {
   readWriteRatio: number;
   cacheHitRate?: number;
   edgeCacheHitRate?: number;
+  latestScore?: JudgeScoreResult | null;
   problem: {
     id: number;
     title: string;
@@ -51,7 +53,6 @@ type SessionPlaygroundProps = {
   chaosTab?: React.ReactNode;
   mermaidTab?: React.ReactNode;
   judgesPanel?: React.ReactNode;
-  onQuickChaos?: () => void;
 };
 
 export function SessionPlayground({
@@ -59,7 +60,6 @@ export function SessionPlayground({
   chaosTab,
   mermaidTab,
   judgesPanel,
-  onQuickChaos,
 }: SessionPlaygroundProps) {
   const initSession = useCanvasStore((s) => s.initSession);
   const resetCanvas = useCanvasStore((s) => s.resetCanvas);
@@ -114,14 +114,14 @@ export function SessionPlayground({
     <div className="flex h-[calc(100vh-4rem)] flex-col">
       <SessionHeader problemTitle={session.problem.title} />
       <Tabs defaultValue="canvas" className="flex min-h-0 flex-1 flex-col">
-        <TabsList className="mx-4 mt-2 w-fit">
+        <TabsList className="ml-auto mr-4 mt-2 w-fit">
           <TabsTrigger value="canvas">Canvas</TabsTrigger>
           <TabsTrigger value="chaos">Chaos</TabsTrigger>
           <TabsTrigger value="mermaid">Mermaid</TabsTrigger>
           <TabsTrigger value="judges">Judges</TabsTrigger>
         </TabsList>
         <TabsContent value="canvas" className="mt-0 min-h-0 flex-1 data-[state=inactive]:hidden">
-          <Canvas onQuickChaos={onQuickChaos} />
+          <Canvas />
         </TabsContent>
         <TabsContent value="chaos" className="mt-0 min-h-0 flex-1 overflow-auto p-4 data-[state=inactive]:hidden">
           {chaosTab}

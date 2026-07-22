@@ -25,7 +25,7 @@ export function NotificationsBell() {
   }, [toggleOpen]);
 
   return (
-    <div className="relative">
+    <div className="relative z-[60]">
       <Button
         variant="ghost"
         size="icon"
@@ -39,7 +39,7 @@ export function NotificationsBell() {
         ) : null}
       </Button>
       {open ? (
-        <div className="absolute right-0 top-full z-50 mt-2 w-80 rounded-lg border border-border bg-card p-3 shadow-lg">
+        <div className="absolute right-0 top-full z-[70] mt-2 w-80 rounded-lg border border-border bg-card p-3 shadow-lg">
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-semibold">Notifications</span>
             <button type="button" className="text-xs text-primary" onClick={markAllRead}>

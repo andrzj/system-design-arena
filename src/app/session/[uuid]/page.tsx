@@ -26,6 +26,7 @@ export default async function SessionPage({ params }: { params: Promise<{ uuid: 
         readWriteRatio: data.readWriteRatio,
         cacheHitRate: data.cacheHitRate,
         edgeCacheHitRate: data.edgeCacheHitRate,
+        latestScore: data.latestScore,
         problem: data.problem,
         nodes: data.nodes.map((node) => ({
           ...node,

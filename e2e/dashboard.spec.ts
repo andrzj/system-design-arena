@@ -15,7 +15,7 @@ test.describe('Phase 9 dashboard', () => {
 
     await page.goto('/dashboard');
     await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Recent sessions' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Session History' })).toBeVisible();
 
     await deleteAuthUser(user.userId!);
   });

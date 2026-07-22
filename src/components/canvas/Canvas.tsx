@@ -19,26 +19,25 @@ import '@xyflow/react/dist/style.css';
 
 import { ComponentPalette } from '@/components/canvas/ComponentPalette';
 import { CanvasToolbar } from '@/components/canvas/CanvasToolbar';
+import { CanvasTopControls } from '@/components/canvas/CanvasTopControls';
 import { EdgeIntentPanel } from '@/components/canvas/EdgeIntentPanel';
 import { FlowEdge } from '@/components/canvas/FlowEdge';
 import { SystemNode } from '@/components/canvas/SystemNode';
 import { LiveMetricsPanel } from '@/components/session/LiveMetricsPanel';
 import { useSimulationLoop } from '@/hooks/use-simulation-loop';
+import { getComponentByType } from '@/lib/canvas/components';
 import { isValidConnection } from '@/lib/canvas/validation';
 import { useCanvasStore, type RFEdge, type RFNode } from '@/store/canvas-store';
 
 const nodeTypes = { system: SystemNode };
 const edgeTypes = { flow: FlowEdge };
 
-type CanvasProps = {
-  onQuickChaos?: () => void;
-};
-
-function CanvasInner({ onQuickChaos }: CanvasProps) {
+function CanvasInner() {
   useSimulationLoop();
 
   const nodes = useCanvasStore((s) => s.nodes);
   const edges = useCanvasStore((s) => s.edges);
+  const nodeMetrics = useCanvasStore((s) => s.simulationSnapshot.nodeMetrics);
   const sessionUuid = useCanvasStore((s) => s.sessionUuid);
   const isInteractive = useCanvasStore((s) => s.isInteractive);
   const showMinimap = useCanvasStore((s) => s.showMinimap);
@@ -49,6 +48,16 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
   const setSelectedEdgeId = useCanvasStore((s) => s.setSelectedEdgeId);
   const loadedRef = useRef(false);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const minimapNodeColor = useCallback(
+    (node: RFNode) => {
+      const metrics = nodeMetrics[node.id];
+      if (metrics?.isBottleneck) return '#ef4444';
+      if (node.data.isDegraded || node.data.isDisabled) return '#64748b';
+      return getComponentByType(node.data.componentType)?.color ?? '#3b82f6';
+    },
+    [nodeMetrics],
+  );
 
   const styledEdges = useMemo(
     () =>
@@ -188,6 +197,7 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
       <ComponentPalette />
       <div className="relative min-h-0 flex-1">
         <ReactFlow
+          colorMode="dark"
           nodes={nodes}
           edges={styledEdges}
           nodeTypes={nodeTypes}
@@ -211,20 +221,34 @@ function CanvasInner({ onQuickChaos }: CanvasProps) {
         >
           <Background gap={20} size={1.5} color="rgba(148, 163, 184, 0.25)" />
           <Controls />
-          {showMinimap ? <MiniMap /> : null}
+          {showMinimap ? (
+            <MiniMap
+              pannable
+              zoomable
+              nodeColor={minimapNodeColor}
+              nodeStrokeColor="#94a3b8"
+              nodeBorderRadius={6}
+              bgColor="#1a1a2e"
+              maskColor="rgba(10, 10, 15, 0.55)"
+              maskStrokeColor="rgba(59, 130, 246, 0.9)"
+              maskStrokeWidth={1.5}
+              className="!border-border !bg-card"
+            />
+          ) : null}
         </ReactFlow>
         <EdgeIntentPanel />
+        <CanvasTopControls />
         <LiveMetricsPanel />
-        <CanvasToolbar onQuickChaos={onQuickChaos} />
+        <CanvasToolbar />
       </div>
     </div>
   );
 }
 
-export function Canvas(props: CanvasProps) {
+export function Canvas() {
   return (
     <ReactFlowProvider>
-      <CanvasInner {...props} />
+      <CanvasInner />
     </ReactFlowProvider>
   );
 }

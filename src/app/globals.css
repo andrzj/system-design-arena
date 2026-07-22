@@ -75,8 +75,18 @@ body {
 }
 
 .react-flow__minimap {
+  background: var(--card) !important;
   border: 1px solid var(--border) !important;
   border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+
+.react-flow__minimap-mask {
+  fill: rgba(10, 10, 15, 0.55);
+}
+
+.react-flow__minimap-node {
+  fill-opacity: 0.95;
 }
 
 .react-flow__edge-path.sim-edge-track {

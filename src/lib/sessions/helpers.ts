@@ -5,6 +5,7 @@ export async function getSessionByUuidOrThrow(sessionUuid: string) {
     where: { sessionUuid },
     include: {
       problem: true,
+      scoreResults: { orderBy: { createdAt: 'desc' }, take: 1 },
       nodes: { orderBy: { createdAt: 'asc' } },
       edges: {
         orderBy: { createdAt: 'asc' },
@@ -68,5 +69,18 @@ export function serializeSession(session: NonNullable<Awaited<ReturnType<typeof 
       label: edge.label,
       style: edge.style,
     })),
+    latestScore: session.scoreResults[0]
+      ? {
+          rigorScore: session.scoreResults[0].judgeRigorScore,
+          pragmatismScore: session.scoreResults[0].judgePragmatismScore,
+          consensusVerdict: session.scoreResults[0].consensusVerdict as
+            | 'pass'
+            | 'borderline'
+            | 'fail'
+            | null,
+          writtenFeedback: session.scoreResults[0].writtenFeedback ?? '',
+          debateSummary: session.scoreResults[0].debateSummary ?? '',
+        }
+      : null,
   };
 }

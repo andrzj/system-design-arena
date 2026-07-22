@@ -6,6 +6,7 @@ import { ChaosEventButton } from '@/components/chaos/ChaosEventButton';
 import { ChaosTimeline } from '@/components/chaos/ChaosTimeline';
 import { Button } from '@/components/ui/button';
 import { getCategories, getEventById, getEventsByCategory } from '@/lib/chaos/events';
+import { requiresChaosTarget } from '@/lib/chaos/scopes';
 import type { ChaosSimulationResult } from '@/lib/chaos/simulate';
 import { useCanvasStore } from '@/store/canvas-store';
 
@@ -13,7 +14,11 @@ const CATEGORY_LABELS: Record<string, string> = {
   infrastructure: 'Infrastructure',
   network: 'Network',
   application: 'Application',
+  dependency: 'Dependencies',
+  data: 'Data',
   security: 'Security',
+  scaling: 'Scaling',
+  human: 'Human Factors',
   global: 'Global',
 };
 
@@ -31,7 +36,7 @@ export function ChaosTab() {
 
   const selectedEvent = selectedEventId ? getEventById(selectedEventId) : null;
 
-  const needsTarget = selectedEvent?.scope === 'node';
+  const needsTarget = selectedEvent ? requiresChaosTarget(selectedEvent.scope) : false;
 
   const runSimulation = async () => {
     if (!sessionUuid || !selectedEventId) return;
@@ -42,7 +47,7 @@ export function ChaosTab() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           eventId: selectedEventId,
-          targetNodeId: targetNodeId === 'global' ? null : targetNodeId,
+          targetNodeId: needsTarget && targetNodeId !== 'global' ? targetNodeId : null,
           nodes: nodes.map((n) => ({
             id: n.id,
             componentType: n.data.componentType,
@@ -65,7 +70,7 @@ export function ChaosTab() {
       }
       addActiveChaos({
         chaosId: selectedEventId,
-        nodeId: targetNodeId === 'global' ? null : targetNodeId,
+        nodeId: needsTarget && targetNodeId !== 'global' ? targetNodeId : null,
         scope: selectedEvent?.scope ?? 'node',
       });
     } finally {
@@ -74,11 +79,10 @@ export function ChaosTab() {
   };
 
   const resetChaos = () => {
-    const affectedNodeIds = new Set(
-      results.flatMap((result) => result.nodeUpdates.map((update) => update.nodeId)),
-    );
-    for (const nodeId of affectedNodeIds) {
-      updateNode(nodeId, { isDisabled: false, isDegraded: false });
+    for (const node of nodes) {
+      if (node.data.isDegraded || node.data.isDisabled) {
+        updateNode(node.id, { isDisabled: false, isDegraded: false });
+      }
     }
     clearActiveChaos();
   };
@@ -109,6 +113,13 @@ export function ChaosTab() {
       </div>
       <aside className="space-y-4 rounded-lg border border-border bg-card/40 p-4">
         <h3 className="text-sm font-semibold">Run chaos</h3>
+        {selectedEvent ? (
+          <p className="text-xs text-muted-foreground">
+            {needsTarget
+              ? 'Pick a node — failure applies to that component only.'
+              : 'Global event — affects the whole design (or region).'}
+          </p>
+        ) : null}
         {needsTarget ? (
           <label className="block space-y-1 text-sm">
             <span className="text-muted-foreground">Target node</span>

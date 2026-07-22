@@ -1,6 +1,8 @@
 import type { RFNode } from '@/store/canvas-store';
 
 import { CHAOS_EVENTS, getEventById } from './events';
+import { chaosEventToModifier, isSignificantChaosImpact } from './event-modifiers';
+import { requiresChaosTarget, resolveAffectedNodeIds } from './scopes';
 
 export type ChaosSimulationInput = {
   eventId: string;
@@ -27,6 +29,10 @@ export function simulateChaosEvent(input: ChaosSimulationInput): ChaosSimulation
     throw new Error(`Unknown chaos event: ${input.eventId}`);
   }
 
+  if (requiresChaosTarget(event.scope) && !input.targetNodeId) {
+    throw new Error(`${event.label} requires a target node`);
+  }
+
   const effects = event.effects as {
     is_disabled?: boolean;
     latency_multiplier?: number | null;
@@ -38,22 +44,16 @@ export function simulateChaosEvent(input: ChaosSimulationInput): ChaosSimulation
   const errorRate = effects.error_rate ?? 0;
   const throughputMultiplier = effects.throughput_multiplier ?? 1;
 
-  let affectedNodeIds: string[] = [];
+  const affectedNodeIds = resolveAffectedNodeIds(event.scope, input.targetNodeId, input.nodes);
   const nodeUpdates: ChaosSimulationResult['nodeUpdates'] = [];
 
-  if (event.scope === 'node' && input.targetNodeId) {
-    affectedNodeIds = [input.targetNodeId];
-  } else if (event.scope === 'global' || event.scope === 'zone') {
-    affectedNodeIds = input.nodes.map((n) => n.id);
-  } else if (input.targetNodeId) {
-    affectedNodeIds = [input.targetNodeId];
-  }
+  const modifier = chaosEventToModifier(event.id);
 
   for (const nodeId of affectedNodeIds) {
     nodeUpdates.push({
       nodeId,
       isDisabled: effects.is_disabled ?? false,
-      isDegraded: !effects.is_disabled && (errorRate > 0 || latencyMultiplier > 1),
+      isDegraded: !effects.is_disabled && isSignificantChaosImpact(modifier),
     });
   }
 
@@ -70,6 +70,8 @@ export function simulateChaosEvent(input: ChaosSimulationInput): ChaosSimulation
     nodeUpdates,
   };
 }
+
+export { pickChaosTargetNodeId } from './scopes';
 
 export function pickRandomChaosEventId(): string {
   const index = Math.floor(Math.random() * CHAOS_EVENTS.length);

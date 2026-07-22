@@ -11,15 +11,15 @@ import { useAuth } from '@/store/auth-store';
 import { useCanvasStore } from '@/store/canvas-store';
 import { useNotificationStore } from '@/store/notification-store';
 
-type ScoreResponse = {
-  rigorScore: number | null;
-  pragmatismScore: number | null;
-  consensusVerdict: 'pass' | 'borderline' | 'fail' | null;
-  writtenFeedback: string;
-  debateSummary: string;
+import type { JudgeScoreResult } from '@/lib/scoring/score-result';
+
+type ScoreResponse = JudgeScoreResult;
+
+type JudgesPanelProps = {
+  initialScore?: JudgeScoreResult | null;
 };
 
-export function JudgesPanel() {
+export function JudgesPanel({ initialScore = null }: JudgesPanelProps) {
   const { isAuthenticated } = useAuth();
   const sessionUuid = useCanvasStore((s) => s.sessionUuid);
   const nodes = useCanvasStore((s) => s.nodes);
@@ -29,7 +29,7 @@ export function JudgesPanel() {
   const traffic = useCanvasStore((s) => s.trafficLevel);
   const readWriteRatio = useCanvasStore((s) => s.readWriteRatio);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<ScoreResponse | null>(null);
+  const [result, setResult] = useState<ScoreResponse | null>(initialScore);
   const addNotification = useNotificationStore((s) => s.addNotification);
 
   const scoreDesign = async () => {

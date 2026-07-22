@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { chaosEventToModifier } from './chaos-modifiers';
+import { chaosEventToModifier } from '@/lib/chaos/event-modifiers';
 import { computeSimulation } from './engine';
 import type { RFEdge, RFNode } from '@/store/canvas-store';
 
@@ -29,7 +29,7 @@ describe('chaos-modifiers', () => {
     expect(modifier.crash).toBe(true);
   });
 
-  it('applies global chaos to non-client nodes during simulation', () => {
+  it('applies ddos traffic multiplier during simulation', () => {
     const nodes = [node('c', 'client'), node('a', 'app_server')];
     const edges = [edge('e1', 'c', 'a')];
     const baseline = computeSimulation({
@@ -43,9 +43,10 @@ describe('chaos-modifiers', () => {
       edges,
       trafficLevel: 2,
       readWriteRatio: 0.9,
-      activeChaos: [{ chaosId: 'dns_failure', nodeId: null, scope: 'global' }],
+      activeChaos: [{ chaosId: 'ddos_attack', nodeId: null, scope: 'global' }],
     });
 
+    expect(withChaos.aggregateMetrics.totalRps).toBeGreaterThan(baseline.aggregateMetrics.totalRps);
     expect(withChaos.nodeMetrics.a.errorRate).toBeGreaterThan(baseline.nodeMetrics.a.errorRate);
   });
 });

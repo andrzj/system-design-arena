@@ -1,19 +1,13 @@
 'use client';
 
-import { Lock, LockOpen, Map, Zap } from 'lucide-react';
+import { Lock, LockOpen, Map } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useCanvasStore } from '@/store/canvas-store';
 
-type CanvasToolbarProps = {
-  onQuickChaos?: () => void;
-};
-
-export function CanvasToolbar({ onQuickChaos }: CanvasToolbarProps) {
+export function CanvasToolbar() {
   const isInteractive = useCanvasStore((s) => s.isInteractive);
   const showMinimap = useCanvasStore((s) => s.showMinimap);
-  const isSimulationRunning = useCanvasStore((s) => s.isSimulationRunning);
-  const setShowLiveMetrics = useCanvasStore((s) => s.setShowLiveMetrics);
   const setInteractive = useCanvasStore((s) => s.setInteractive);
   const setShowMinimap = useCanvasStore((s) => s.setShowMinimap);
 
@@ -35,22 +29,6 @@ export function CanvasToolbar({ onQuickChaos }: CanvasToolbarProps) {
       >
         <Map className="h-4 w-4" />
       </Button>
-      {isSimulationRunning ? (
-        <Button
-          variant="secondary"
-          size="sm"
-          data-testid="live-metrics"
-          onClick={() => setShowLiveMetrics(true)}
-        >
-          Live Metrics
-        </Button>
-      ) : null}
-      {onQuickChaos ? (
-        <Button variant="outline" size="sm" onClick={onQuickChaos} data-testid="quick-chaos">
-          <Zap className="mr-1 h-4 w-4" />
-          Quick Chaos
-        </Button>
-      ) : null}
     </div>
   );
 }

@@ -38,5 +38,26 @@ describe('simulateChaosEvent', () => {
     });
 
     expect(result.affectedNodeIds).toHaveLength(2);
+    expect(result.nodeUpdates.every((update) => update.isDegraded)).toBe(true);
+  });
+
+  it('requires target for service-scoped events', () => {
+    expect(() =>
+      simulateChaosEvent({
+        eventId: 'memory_leak',
+        nodes: sampleNodes,
+      }),
+    ).toThrow(/requires a target node/i);
+  });
+
+  it('degrades targeted service node on deploy failure', () => {
+    const result = simulateChaosEvent({
+      eventId: 'deploy_failure',
+      targetNodeId: 'node-a',
+      nodes: sampleNodes,
+    });
+
+    expect(result.affectedNodeIds).toEqual(['node-a']);
+    expect(result.nodeUpdates[0]?.isDegraded).toBe(true);
   });
 });
