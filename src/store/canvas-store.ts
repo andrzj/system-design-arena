@@ -63,6 +63,7 @@ interface CanvasState {
   isInteractive: boolean;
   showMinimap: boolean;
   paletteMinimized: boolean;
+  inspectorMinimized: boolean;
   simulationSnapshot: SimulationSnapshot;
   notesPanelNodeId: string | null;
   workbenchMode: WorkbenchMode;
@@ -88,6 +89,7 @@ interface CanvasState {
   setInteractive: (interactive: boolean) => void;
   setShowMinimap: (show: boolean) => void;
   setPaletteMinimized: (minimized: boolean) => void;
+  setInspectorMinimized: (minimized: boolean) => void;
   setSimulationSnapshot: (snapshot: SimulationSnapshot) => void;
   setNotesPanelNodeId: (nodeId: string | null) => void;
   setWorkbenchMode: (mode: WorkbenchMode) => void;
@@ -147,6 +149,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   isInteractive: true,
   showMinimap: true,
   paletteMinimized: false,
+  inspectorMinimized: false,
   simulationSnapshot: {
     nodeMetrics: {},
     edgeMetrics: {},
@@ -252,6 +255,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
   setInteractive: (interactive) => set({ isInteractive: interactive }),
   setShowMinimap: (show) => set({ showMinimap: show }),
   setPaletteMinimized: (minimized) => set({ paletteMinimized: minimized }),
+  setInspectorMinimized: (minimized) => set({ inspectorMinimized: minimized }),
   setSimulationSnapshot: (snapshot) => set({ simulationSnapshot: snapshot }),
   setNotesPanelNodeId: (nodeId) => set({ notesPanelNodeId: nodeId }),
   setWorkbenchMode: (mode) => set({ workbenchMode: mode }),
@@ -300,6 +304,7 @@ export const useCanvasStore = create<CanvasState>((set, get) => ({
       isInteractive: true,
       showMinimap: true,
       paletteMinimized: false,
+      inspectorMinimized: false,
       simulationSnapshot: {
         nodeMetrics: {},
         edgeMetrics: {},
